@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCO — Sesión 1: Estrategia de Operaciones (Teoría)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>if(!window.THREE){document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');}</script>
+<style>
+:root{--bg:#04040a;--cyan:#00f0ff;--magenta:#ff2ec4;--yellow:#ffe600;--green:#39ff14;--orange:#ff9500;--purple:#a855f7;--usil:#0b5cab;--gold:#c9a24b;--card:rgba(255,255,255,.05);--border:rgba(0,240,255,.25)}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
+body{background:var(--bg);color:#eaf6ff;font-family:'Segoe UI',system-ui,Arial,sans-serif;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1100px 600px at 82% -10%,rgba(0,240,255,.13),transparent 60%),radial-gradient(900px 520px at 8% 110%,rgba(255,46,196,.11),transparent 60%),radial-gradient(700px 420px at 50% 55%,rgba(168,85,247,.08),transparent 60%);animation:hue 14s ease-in-out infinite alternate}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:radial-gradient(1.5px 1.5px at 25% 35%,rgba(0,240,255,.8) 50%,transparent 51%),radial-gradient(1.5px 1.5px at 75% 65%,rgba(255,46,196,.8) 50%,transparent 51%),radial-gradient(1.2px 1.2px at 50% 20%,rgba(255,230,0,.8) 50%,transparent 51%),radial-gradient(1.2px 1.2px at 12% 78%,rgba(57,255,20,.7) 50%,transparent 51%);background-size:340px 340px,420px 420px,260px 260px,380px 380px;animation:drift 90s linear infinite}
+@keyframes hue{to{filter:hue-rotate(40deg)}}@keyframes drift{to{background-position:340px 680px,-420px 840px,260px -520px,-380px 760px}}
+header{position:fixed;top:0;left:0;right:0;height:64px;z-index:50;display:flex;align-items:center;gap:14px;padding:0 18px;background:rgba(5,6,16,.93);border-bottom:1px solid var(--border)}
+#logoWrap{background:#fff;border-radius:10px;padding:3px 10px;display:flex;align-items:center;flex-shrink:0}#logoWrap img{height:42px;display:block}
+.brand{font-weight:800;font-size:15px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.head-info{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;font-size:12px}
+.chip{padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--cyan);background:rgba(0,240,255,.06);font-weight:600}
+.chip.doc{border-color:rgba(255,46,196,.45);color:var(--magenta);background:rgba(255,46,196,.07)}
+#progress{position:fixed;top:64px;left:0;height:3px;width:0;z-index:60;background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--yellow));box-shadow:0 0 14px var(--cyan);transition:width .45s}
+#stage{position:fixed;inset:64px 0 78px 0;z-index:10}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .55s;overflow-y:auto;padding:28px 5vw 60px}
+.slide.active{opacity:1;pointer-events:auto}
+h1.big{font-size:clamp(28px,4.8vw,58px);line-height:1.05;font-weight:900;background:linear-gradient(90deg,var(--cyan) 10%,var(--magenta) 55%,var(--yellow) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(0,240,255,.35))}
+h2.sec{font-size:clamp(22px,3.2vw,34px);font-weight:900;margin-bottom:6px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:#9fd8e8;font-size:15px;margin-bottom:18px;max-width:920px;line-height:1.5}
+.kicker{display:inline-block;font-size:12px;letter-spacing:3px;color:var(--yellow);border:1px solid rgba(255,230,0,.4);padding:5px 14px;border-radius:20px;margin-bottom:14px;background:rgba(255,230,0,.06);text-transform:uppercase;font-weight:700}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;backdrop-filter:blur(6px)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.g5{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.neon-c{color:var(--cyan)}.neon-m{color:var(--magenta)}.neon-y{color:var(--yellow)}.neon-g{color:var(--green)}.neon-o{color:var(--orange)}.neon-p{color:var(--purple)}
+.tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:14px;margin:3px 4px 3px 0;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05)}
+.btn{cursor:pointer;border:1px solid var(--cyan);color:var(--cyan);background:rgba(0,240,255,.07);padding:10px 22px;border-radius:10px;font-size:15px;font-weight:700;text-transform:uppercase;transition:.25s;text-decoration:none;display:inline-block}
+.btn:hover{background:rgba(0,240,255,.2);box-shadow:0 0 18px rgba(0,240,255,.5);transform:translateY(-2px)}
+.btn.mg{border-color:var(--magenta);color:var(--magenta);background:rgba(255,46,196,.07)}.btn.yl{border-color:var(--yellow);color:var(--yellow);background:rgba(255,230,0,.07)}.btn.gr{border-color:var(--green);color:var(--green);background:rgba(57,255,20,.07)}
+.btn.sm{padding:6px 14px;font-size:12.5px}.btn.active-opt{background:rgba(0,240,255,.28);box-shadow:0 0 16px rgba(0,240,255,.55)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--cyan),var(--magenta));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--yellow);border:2px solid #000;box-shadow:0 0 12px var(--yellow);cursor:pointer}
+footer{position:fixed;bottom:0;left:0;right:0;height:78px;z-index:50;display:flex;align-items:center;gap:16px;padding:0 22px;background:rgba(5,6,16,.93);border-top:1px solid var(--border)}
+#slideSlider{flex:1}#slideCounter{font-size:13px;color:#9fd8e8;min-width:64px;text-align:center;font-weight:700}
+.stat{font-size:26px;font-weight:900}.stat-lbl{font-size:11.5px;letter-spacing:1.5px;color:#8fb8c6;text-transform:uppercase}
+.tl-item{cursor:pointer;transition:.25s}.tl-item:hover{transform:translateY(-3px);box-shadow:0 0 20px rgba(0,240,255,.25)}
+canvas.view{width:100%;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,10,.5)}
+.center{text-align:center}
+.note{border-left:4px solid var(--yellow);background:rgba(255,230,0,.06);padding:10px 14px;border-radius:0 10px 10px 0;font-size:13.5px;color:#f2ecc0;margin-top:12px}
+.katex{color:#fff}
+.flash .ans{display:none;margin-top:10px;border-left:3px solid var(--green);padding:8px 12px;background:rgba(57,255,20,.08);color:#c9ffd9;font-size:13.5px}
+.flash.open .ans{display:block}
+.aviso{border:2px dashed var(--magenta);background:rgba(255,46,196,.08);border-radius:14px;padding:18px;font-size:17px;font-weight:800;color:var(--magenta);text-align:center;box-shadow:0 0 24px rgba(255,46,196,.25)}
+/* Cadena de suministro */
+.chainrow{display:flex;gap:6px;align-items:stretch;flex-wrap:wrap}
+.cnode{opacity:0;transform:scale(.8);transition:.4s;border:2px solid var(--cyan);border-radius:12px;padding:10px 8px;font-weight:800;text-align:center;background:rgba(0,240,255,.08);flex:1;min-width:105px;font-size:12px}
+.cnode small{display:block;font-weight:400;color:#bfe9f5;margin-top:4px}
+.cnode.show{opacity:1;transform:scale(1)}
+.cnode.m{border-color:var(--magenta);background:rgba(255,46,196,.08)}.cnode.g{border-color:var(--green);background:rgba(57,255,20,.08)}.cnode.o{border-color:var(--orange);background:rgba(255,149,0,.08)}
+.carrow{opacity:0;transition:.4s;color:var(--yellow);font-size:20px;align-self:center}
+.carrow.show{opacity:1}
+/* Tablero alineamiento */
+.nboard{position:relative;height:430px;border:1px solid var(--border);border-radius:14px;max-width:760px;overflow:hidden;background:rgba(0,0,10,.55);background-image:linear-gradient(rgba(0,240,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.06) 1px,transparent 1px);background-size:28px 28px}
+.sbox{position:absolute;left:50%;transform:translateX(-50%) scale(.8);opacity:0;transition:.4s;border-radius:12px;padding:12px 20px;font-weight:800;text-align:center;border:2px solid var(--cyan);background:rgba(0,240,255,.08);max-width:460px}
+.sbox.show{opacity:1;transform:translateX(-50%) scale(1)}
+.sbox.m{border-color:var(--magenta);background:rgba(255,46,196,.08)}
+.sbox.g{border-color:var(--green);background:rgba(57,255,20,.08)}
+.sbox.o{border-color:var(--orange);background:rgba(255,149,0,.08)}
+.sbox small{display:block;font-weight:400;font-size:11px;color:#bfe9f5;margin-top:4px}
+.sarrow{position:absolute;left:50%;width:3px;background:var(--yellow);opacity:0;transition:.4s;box-shadow:0 0 8px rgba(255,230,0,.5)}
+.sarrow.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+ <div id="logoWrap"><img src="USIL_logo.png" alt="USIL 30 años" onerror="this.onerror=null;this.style.display='none';document.getElementById('logoFallback').style.display='block';">
+  <svg id="logoFallback" viewBox="0 0 250 90" height="42" style="display:none"><text x="2" y="64" font-size="54" font-weight="700" fill="none" stroke="#c9a24b" stroke-width="2.5" font-family="Georgia,serif">30</text><circle cx="88" cy="36" r="24" fill="none" stroke="#c9a24b" stroke-width="3"/><text x="88" y="42" font-size="14" fill="#c9a24b" text-anchor="middle" font-family="Georgia,serif">años</text><text x="118" y="68" font-size="56" font-weight="800" fill="#0b5cab" font-family="Georgia,serif" font-style="italic">USIL</text></svg></div>
+ <div class="brand">⚙ PLANEAMIENTO Y CONTROL DE OPERACIONES · TEORÍA</div>
+ <div class="head-info"><span class="chip">Sesión 1 · Estrategia de Operaciones</span><span class="chip doc">👷 Eduardo Olivos</span></div>
+</header>
+<div id="progress"></div>
+<div id="stage">
+
+<section class="slide active" id="s0"><div style="min-height:82%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+ <span class="kicker">Sesión 01 · 2026-II</span>
+ <h1 class="big">ESTRATEGIA DE<br>OPERACIONES</h1>
+ <p class="sub center" style="margin-top:14px">De la <b class="neon-c">meta de la empresa</b> a las <b class="neon-m">prioridades competitivas</b> y el <b class="neon-g">alineamiento estratégico</b> de operaciones.</p>
+ <div class="card"><b class="neon-y">Curso:</b> Planeamiento y Control de Operaciones | <b class="neon-y">Docente:</b> Eduardo Olivos</div>
+ <div class="btnrow" style="justify-content:center;margin-top:26px"><button class="btn" onclick="goTo(1)">▶ Iniciar la clase</button></div>
+</div></section>
+
+<section class="slide" id="s1"><span class="kicker">Hoja de ruta</span><h2 class="sec">🗺 Hoja de ruta de la sesión</h2>
+ <p class="sub">Haz clic en cada bloque (avanzamos al ritmo del grupo):</p>
+ <div class="grid g4">
+  <div class="card tl-item" onclick="goTo(2)"><div class="stat neon-c">🎯</div><div class="stat-lbl">Meta y funciones</div></div>
+  <div class="card tl-item" onclick="goTo(5)"><div class="stat neon-y">⚙</div><div class="stat-lbl">Adm. de Operaciones</div></div>
+  <div class="card tl-item" onclick="goTo(7)"><div class="stat neon-m">🔗</div><div class="stat-lbl">Cadena de valor/suministro</div></div>
+  <div class="card tl-item" onclick="goTo(9)"><div class="stat neon-o">🧭</div><div class="stat-lbl">Niveles de estrategia</div></div>
+  <div class="card tl-item" onclick="goTo(10)"><div class="stat neon-g">🏆</div><div class="stat-lbl">Prioridades y capacidades</div></div>
+  <div class="card tl-item" onclick="goTo(12)"><div class="stat neon-p">🆕</div><div class="stat-lbl">Nuevos productos</div></div>
+  <div class="card tl-item" onclick="goTo(15)"><div class="stat neon-c">🧊</div><div class="stat-lbl">3D y síntesis</div></div>
+  <div class="card tl-item" onclick="goTo(17)"><div class="stat neon-m">📢</div><div class="stat-lbl">Cierre</div></div>
+ </div>
+ <div class="note">💡 <b>Repasa con este archivo:</b> todas las preguntas de la evaluación salen de aquí.</div>
+</section>
+
+<section class="slide" id="s2"><span class="kicker">Momento 1 · Utilidad</span><h2 class="sec">🎯 Objetivos y reto</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Objetivos de la sesión</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Identificar la <b>meta</b> de la empresa.</li><li>Conocer la <b>importancia de la estrategia</b>.</li><li>Reconocer las <b>funciones</b> y resaltar el área de <b>operaciones</b>.</li><li>Identificar el <b>alineamiento estratégico</b>.</li></ul>
+   <h3 class="neon-m" style="margin-top:14px">Reto</h3><p style="font-size:14px;line-height:1.6;margin-top:6px">🛒 ¿Por qué existen ciertas ofertas en el mercado y quiénes son nuestros clientes? Al final podrás expresarlo como <b>prioridades competitivas</b> y <b>ganadores/calificadores de pedido</b>.</p></div>
+  <div class="card"><h3 class="neon-y">La meta y el cómo</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li><b>Meta:</b> generar utilidades y enfrentar a la competencia.</li><li><b>¿Cómo?</b> Generando <b class="neon-g">ventaja competitiva</b>, gestionando recursos y logrando <b>clientes satisfechos</b>.</li></ul>
+   <div class="note">🧩 Identificar necesidades → satisfacer necesidades = razón de ser de la empresa.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s3"><span class="kicker">Innovación · ¿Qué observas?</span><h2 class="sec">🛒 ¿Por qué eliges una oferta?</h2>
+ <p class="sub">Pulsa cada motivo y descubre a qué prioridad competitiva corresponde:</p>
+ <div class="btnrow" id="innBtns"></div>
+ <div class="card" id="innInfo" style="min-height:80px"><b class="neon-y">Selecciona un motivo</b>.</div>
+ <div class="note">🚀 Esos motivos son las <b>prioridades competitivas</b> que la estrategia de operaciones debe cumplir.</div>
+</section>
+
+<section class="slide" id="s4"><span class="kicker">Funciones de la empresa</span><h2 class="sec">🏢 ¿Dónde está Operaciones?</h2>
+ <div class="grid g4">
+  <div class="card center"><b class="neon-c">Dirección / Gerencia</b></div>
+  <div class="card center"><b class="neon-c">Compras</b></div>
+  <div class="card center"><b class="neon-c">Recursos Humanos</b></div>
+  <div class="card center" style="border-color:var(--green)"><b class="neon-g">OPERACIONES / PRODUCCIÓN</b></div>
+  <div class="card center"><b class="neon-m">Control de Gestión</b></div>
+  <div class="card center"><b class="neon-m">Marketing</b></div>
+  <div class="card center"><b class="neon-m">Comercial / Ventas</b></div>
+  <div class="card center"><b class="neon-m">Administración / Finanzas</b></div>
+ </div>
+ <div class="card flash" style="margin-top:14px"><b class="neon-y">🤔 ¿Qué hace la función de Operaciones?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Producción de <b>bienes</b> y <b>servicios</b> + <b>planificación y control</b> de los procesos que transforman insumos.</div></div>
+</section>
+
+<section class="slide" id="s5"><span class="kicker">Administración de Operaciones</span><h2 class="sec">⚙ Definición y etapas</h2>
+ <div class="card" style="margin-bottom:14px"><p style="font-size:15px;line-height:1.6">Es el <b class="neon-c">diseño, dirección y control sistemático</b> de los procesos que transforman insumos en productos y servicios; el estudio de la <b class="neon-m">toma de decisiones</b> en la función de operaciones.</p></div>
+ <p class="sub">Pulsa cada etapa:</p>
+ <div class="btnrow" id="etpBtns"></div>
+ <div class="card" id="etpInfo" style="min-height:80px"><b class="neon-y">Selecciona una etapa</b>.</div>
+</section>
+
+<section class="slide" id="s6"><span class="kicker">Decisiones</span><h2 class="sec">🧩 Decisiones de la Adm. de Operaciones</h2>
+ <div class="grid g3">
+  <div class="card center"><b class="neon-c">1</b><p style="font-size:12.5px;margin-top:4px">Diseño de servicio y producto</p></div>
+  <div class="card center"><b class="neon-c">2</b><p style="font-size:12.5px;margin-top:4px">Administración de la calidad</p></div>
+  <div class="card center"><b class="neon-m">3</b><p style="font-size:12.5px;margin-top:4px">Localización de planta</p></div>
+  <div class="card center"><b class="neon-m">4</b><p style="font-size:12.5px;margin-top:4px">Distribución de planta (layout)</p></div>
+  <div class="card center"><b class="neon-m">5</b><p style="font-size:12.5px;margin-top:4px">RR.HH. y diseño del trabajo</p></div>
+  <div class="card center"><b class="neon-g">6</b><p style="font-size:12.5px;margin-top:4px">Cadena de suministro</p></div>
+  <div class="card center"><b class="neon-g">7</b><p style="font-size:12.5px;margin-top:4px">Inventarios y MRP</p></div>
+  <div class="card center"><b class="neon-o">8</b><p style="font-size:12.5px;margin-top:4px">Programación mediano/corto plazo</p></div>
+  <div class="card center"><b class="neon-o">9</b><p style="font-size:12.5px;margin-top:4px">Mantenimiento</p></div>
+ </div>
+</section>
+
+<section class="slide" id="s7"><span class="kicker">Constructor · Cadena</span><h2 class="sec">🔗 Cadena de Valor y de Suministros</h2>
+ <p class="sub">Mueve el <b>deslizador</b> y arma la cadena de suministro:</p>
+ <input type="range" id="scSlider" min="0" max="6" value="0" style="width:100%;max-width:700px" oninput="drawSC(+this.value)">
+ <div class="card" id="scLabel" style="margin:10px 0;min-height:46px"></div>
+ <div class="chainrow" id="scBoard">
+  <div class="cnode o" data-step="1">Proveedor externo<small>insumos</small></div><div class="carrow" data-step="2">→</div>
+  <div class="cnode" data-step="2">Empresa 1 · Proveedor</div><div class="carrow" data-step="3">→</div>
+  <div class="cnode m" data-step="3">Empresa 2 · Fabricante<small>transforma</small></div><div class="carrow" data-step="4">→</div>
+  <div class="cnode" data-step="4">Empresa 3 · Distribuidor</div><div class="carrow" data-step="5">→</div>
+  <div class="cnode m" data-step="5">Empresa 4 · Minorista</div><div class="carrow" data-step="6">→</div>
+  <div class="cnode g" data-step="6">Cliente final<small>valor</small></div>
+ </div>
+ <div class="grid g3" style="margin-top:14px">
+  <div class="card"><b class="neon-c">Procesos estratégicos</b><p style="font-size:12.5px;margin-top:6px;color:#bfe9f5">Relación con proveedores · desarrollo de nuevos productos/servicios.</p></div>
+  <div class="card"><b class="neon-g">Procesos centrales (core)</b><p style="font-size:12.5px;margin-top:6px;color:#bfe9f5">Surtido de pedidos · relaciones con clientes.</p></div>
+  <div class="card"><b class="neon-m">Procesos de apoyo</b><p style="font-size:12.5px;margin-top:6px;color:#bfe9f5">Sostienen a los centrales y estratégicos.</p></div>
+ </div>
+ <div class="note">💎 Cadena de Valor = <b>crear, entregar y capturar valor</b>.</div>
+</section>
+
+<section class="slide" id="s8"><span class="kicker">Estrategia de la organización</span><h2 class="sec">🧭 HOY → MAÑANA (SMART · KPI · Metas)</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Despliegue estratégico</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li><b>Objetivo SMART</b> → <b>KPI</b> → <b>Meta</b> → <b>Iniciativas estratégicas</b>.</li><li>Balanced Scorecard · OPEX/CAPEX · Project Management.</li><li><b>Estrategia</b> = QUÉ (largo plazo). <b>Táctica</b> = CÓMO (mediano). <b>Operación</b> = ejecuta (corto).</li></ul></div>
+  <div class="card flash"><b class="neon-y">🤔 ¿Qué diferencia estrategia, táctica y operación?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">La estrategia orienta visión/objetivos/metas (QUÉ, largo plazo); la táctica despliega en acciones/iniciativas (CÓMO, mediano); la operación ejecuta (corto plazo).</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s9"><span class="kicker">Constructor · Alineamiento</span><h2 class="sec">🎯 Alineamiento Estratégico</h2>
+ <p class="sub">Mueve el <b>deslizador</b>:</p>
+ <input type="range" id="alSlider" min="0" max="4" value="0" style="width:100%;max-width:640px" oninput="drawAl(+this.value)">
+ <div class="card" id="alLabel" style="margin:10px 0;min-height:46px;max-width:760px"></div>
+ <div class="nboard" id="alBoard">
+  <div class="sbox" data-step="1" style="top:30px">🏆 PRIORIDADES COMPETITIVAS<small>Costo · Calidad · Tiempo · Flexibilidad (lo que el cliente exige)</small></div>
+  <div class="sarrow" data-step="2" style="top:110px;height:50px"></div>
+  <div class="sbox m" data-step="2" style="top:170px">⚙ CAPACIDADES DE LA OPERACIÓN<small>Actuales vs. necesarias</small></div>
+  <div class="sarrow" data-step="3" style="top:250px;height:50px"></div>
+  <div class="sbox o" data-step="3" style="top:310px">📏 BRECHA<small>Diferencia a cerrar con planes y proyectos</small></div>
+  <div class="sbox g" data-step="4" style="top:380px">✅ ALINEAMIENTO<small>Operaciones implementa la estrategia corporativa</small></div>
+ </div>
+</section>
+
+<section class="slide" id="s10"><span class="kicker">Prioridades → Capacidades</span><h2 class="sec">🏆 Las 9 prioridades competitivas</h2>
+ <div class="btnrow" id="prioBtns"></div>
+ <div class="card" id="prioInfo" style="min-height:90px"><b class="neon-y">Selecciona una prioridad</b>.</div>
+ <div class="note">🛫 <b>Ejemplo aerolínea:</b> Primera clase prioriza <b>calidad superior + entrega a tiempo</b>; clase turista prioriza <b>bajo costo + calidad consistente + entrega a tiempo</b>.</div>
+</section>
+
+<section class="slide" id="s11"><span class="kicker">Calificador vs. Ganador</span><h2 class="sec">🥇 Ganadores y Calificadores de Pedidos</h2>
+ <div class="btnrow">
+  <button class="btn sm active-opt" id="cqB0" onclick="showCQ(0)">CALIFICADOR</button>
+  <button class="btn sm mg" id="cqB1" onclick="showCQ(1)">GANADOR</button>
+  <button class="btn sm yl" id="cqB2" onclick="showCQ(2)">USOS</button>
+ </div>
+ <div id="cqPanel"></div>
+</section>
+
+<section class="slide" id="s12"><span class="kicker">Nuevos productos/servicios</span><h2 class="sec">🆕 Desarrollo y posición en el mercado</h2>
+ <div class="grid g3">
+  <div class="card flash"><b class="neon-c">Posición: Líder</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Primero en lanzar, congruente con la tendencia a la innovación.</div></div>
+  <div class="card flash"><b class="neon-m">Posición: Moderado</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Espera hasta que los líderes lanzan el producto/servicio.</div></div>
+  <div class="card flash"><b class="neon-o">Posición: Rezagado</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Espera a ver si la idea tiene efecto en el mercado.</div></div>
+ </div>
+ <div class="grid g2" style="margin-top:14px">
+  <div class="card"><h3 class="neon-y">Ventajas de ofrecer nuevos productos</h3><ul style="font-size:13.5px;line-height:2;padding-left:18px"><li>Mejorar rentabilidad · atraer nuevos clientes.</li><li>Intensificar lealtad · abrir mercados.</li></ul></div>
+  <div class="card flash"><b class="neon-g">Paquete de servicios (4 componentes)</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans"><b>Instalaciones auxiliares</b> (edificios, equipos), <b>bienes facilitadores</b> (material comprado/consumido), <b>servicios explícitos</b> (beneficios percibidos por los sentidos) y <b>servicios implícitos</b> (beneficios psicológicos).</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s13"><span class="kicker">KaTeX · Brecha</span><h2 class="sec">📐 Cerrar la brecha</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Fórmula de alineamiento</h3>
+   $$Brecha = Capacidades_{necesarias} - Capacidades_{actuales}$$
+   <p style="font-size:13.5px;margin-top:8px">Los <b>planes y proyectos</b> cierran la brecha para cumplir las prioridades competitivas.</p></div>
+  <div class="card flash"><b class="neon-m">Ejemplo:</b> el mercado exige entrega en 24 h (capacidad necesaria) y hoy tardamos 72 h. ¿Brecha?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">\(72-24=48\) h de brecha → proyectos de logística/programación para cerrarla.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s14"><span class="kicker">Chart.js · Aerolínea</span><h2 class="sec">📈 Prioridades por segmento</h2>
+ <div class="grid g2">
+  <div class="card"><canvas id="chartAir" style="height:260px"></canvas></div>
+  <div class="card"><h3 class="neon-y">Lectura</h3><ul style="font-size:13.5px;line-height:2;padding-left:18px"><li><b class="neon-c">Primera clase:</b> calidad superior + entrega a tiempo (servicios periféricos premium).</li><li><b class="neon-m">Turista:</b> bajo costo + calidad consistente + entrega a tiempo (servicios estandarizados).</li><li>Las prioridades se comunican a los <b>procesos centrales</b>.</li></ul></div>
+ </div>
+</section>
+
+<section class="slide" id="s15"><span class="kicker">Three.js · 3D</span><h2 class="sec">🧊 Pirámide de estrategias</h2>
+ <p class="sub">Arrastra para rotar; pulsa un nivel:</p>
+ <div class="btnrow">
+  <button class="btn sm" onclick="focus3D(0)">Corporativa</button>
+  <button class="btn sm mg" onclick="focus3D(1)">Negocio</button>
+  <button class="btn sm yl" onclick="focus3D(2)">Funcionales</button>
+  <button class="btn sm gr" onclick="focus3D(3)">Operaciones</button>
+ </div>
+ <canvas id="threeCanvas" class="view" style="height:340px"></canvas>
+ <div class="card" id="threeDesc" style="margin-top:12px"><b class="neon-c">Escena 3D:</b> la base (operaciones) sostiene a la cima (corporativa).</div>
+</section>
+
+<section class="slide" id="s16"><span class="kicker">Repaso · respuestas ocultas</span><h2 class="sec">🎯 Tarjetas de repaso</h2>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-c">1.</b> ¿Cuál es la meta de la empresa?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Generar utilidades y enfrentar a la competencia, mediante ventaja competitiva y clientes satisfechos.</div></div>
+  <div class="card flash"><b class="neon-m">2.</b> ¿Qué son las prioridades competitivas?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Costo, calidad, tiempo y flexibilidad; son el vínculo entre estrategia corporativa y de operaciones.</div></div>
+  <div class="card flash"><b class="neon-y">3.</b> Diferencia calificador vs. ganador.<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Calificador = mínimo para competir; ganador = lo que hace que el cliente te elija.</div></div>
+  <div class="card flash"><b class="neon-g">4.</b> ¿Qué hace la estrategia de operaciones?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Implementa la estrategia corporativa y construye una organización orientada al cliente.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s17"><div style="min-height:80%;display:flex;flex-direction:column;justify-content:center">
+ <span class="kicker">Cierre</span><h2 class="sec">🏁 Conclusiones</h2>
+ <div class="grid g4" style="margin:16px 0">
+  <div class="card"><b class="neon-c">Meta</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Utilidades + ventaja competitiva.</p></div>
+  <div class="card"><b class="neon-m">Funciones</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Operaciones es pieza clave en decisiones.</p></div>
+  <div class="card"><b class="neon-g">Prioridades</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Vínculo corporativa ↔ operaciones.</p></div>
+  <div class="card"><b class="neon-y">Flexibilidad</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Los clientes exigen variedad.</p></div>
+ </div>
+ <div class="card"><h3 class="neon-g">📚 Referencias</h3><p style="font-size:13px;line-height:1.9;color:#bfe9f5">Krajewski, Ritzman & Malhotra (2013) · Heizer & Render (2019).</p></div>
+ <div class="aviso" style="margin-top:26px">📢 ESTÉN ATENTOS AL INICIO DE LA EVALUACIÓN EN CLASE</div>
+ <p class="center" style="margin-top:16px;font-size:20px;font-weight:900;background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent">¡MUCHAS GRACIAS! ⚙✨</p>
+</div></section>
+</div>
+
+<footer>
+ <button class="btn sm" onclick="goTo(current-1)">◀ Anterior</button>
+ <input type="range" id="slideSlider" min="0" max="17" value="0" oninput="goTo(+this.value)">
+ <button class="btn sm" onclick="goTo(current+1)">Siguiente ▶</button>
+ <span id="slideCounter">1 / 18</span>
+</footer>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];let current=0;
+const slider=document.getElementById('slideSlider');slider.max=slides.length-1;
+function goTo(i){if(i<0||i>=slides.length)return;slides[current].classList.remove('active');current=i;slides[current].classList.add('active');slides[current].scrollTop=0;slider.value=i;document.getElementById('slideCounter').textContent=(i+1)+' / '+slides.length;document.getElementById('progress').style.width=(i/(slides.length-1)*100)+'%';onSlideEnter(i);}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;if(e.key==='ArrowRight')goTo(current+1);if(e.key==='ArrowLeft')goTo(current-1);});
+function makeBtns(id,infoId,data){const c=document.getElementById(id);data.forEach((d,i)=>{const b=document.createElement('button');b.className='btn sm'+(i%2?' mg':'');b.textContent=d[0];b.onclick=()=>{c.querySelectorAll('.btn').forEach(x=>x.classList.remove('active-opt'));b.classList.add('active-opt');document.getElementById(infoId).innerHTML='<b class="neon-c">'+d[0]+'</b><p style="margin-top:6px;font-size:14px;color:#d9f3fb">'+d[1]+'</p>';};c.appendChild(b);});}
+makeBtns('innBtns','innInfo',[['“Por el precio”','Prioridad <b>COSTO</b>: operaciones de bajo costo.'],['“Por la calidad”','Prioridad <b>CALIDAD</b>: superior o consistente.'],['“Porque llega rápido”','Prioridad <b>TIEMPO</b>: velocidad de entrega, entrega a tiempo.'],['“Porque se adapta”','Prioridad <b>FLEXIBILIDAD</b>: personalización, variedad, volumen.']]);
+makeBtns('etpBtns','etpInfo',[['Diseño','Establecer estructura de procesos y asignar responsabilidades.'],['Planeamiento','Determinar los objetivos del sistema de operaciones.'],['Dirección','Ejecutar lo programado y responder por la marcha.'],['Control','Asegurar que planes y programas se cumplan.']]);
+makeBtns('prioBtns','prioInfo',[['Costo','1. Operaciones de bajo costo.'],['Calidad','2. Calidad superior · 3. Calidad consistente.'],['Tiempo','4. Velocidad de entrega · 5. Entrega a tiempo · 6. Velocidad de desarrollo.'],['Flexibilidad','7. Personalización · 8. Variedad · 9. Flexibilidad de volumen.']]);
+/* Cadena suministro */
+const scSteps=['Paso 0 — Mueve el deslizador para armar la cadena.','1 — El proveedor externo abastece insumos.','2 — Empresa 1 (Proveedor) → Empresa 2.','3 — Empresa 2 (Fabricante) transforma.','4 — Empresa 3 (Distribuidor) acerca al mercado.','5 — Empresa 4 (Minorista) vende al cliente.','6 — El CLIENTE FINAL recibe el valor ✔ (crear, entregar y capturar valor).'];
+function drawSC(s){document.getElementById('scLabel').innerHTML='<b class="neon-c">▶</b> '+scSteps[s];document.querySelectorAll('#scBoard .cnode,#scBoard .carrow').forEach(el=>el.classList.toggle('show',+el.dataset.step<=s));}
+drawSC(0);
+/* Alineamiento */
+const alSteps=['Paso 0 — Mueve el deslizador.','1 — El cliente exige PRIORIDADES (costo, calidad, tiempo, flexibilidad).','2 — La operación responde con sus CAPACIDADES actuales.','3 — Comparar necesarias vs. actuales → BRECHA.','4 — Planes y proyectos cierran la brecha = ALINEAMIENTO ✔.'];
+function drawAl(s){document.getElementById('alLabel').innerHTML='<b class="neon-c">▶</b> '+alSteps[s];document.querySelectorAll('#alBoard .sbox,#alBoard .sarrow').forEach(el=>el.classList.toggle('show',+el.dataset.step<=s));}
+drawAl(0);
+/* Calificador vs ganador */
+const cqs=['<div class="card"><h3 class="neon-c">CALIFICADOR de pedido</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Nivel de desempeño <b>requerido</b> para hacer negocios en un segmento.</li><li>Su ausencia te elimina; no gana el pedido.</li></ul></div>','<div class="card"><h3 class="neon-m">GANADOR de pedido</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Criterio que <b>diferencia</b> tus productos/servicios de los de otra empresa.</li><li>Es la prioridad a potenciar.</li></ul></div>','<div class="card"><h3 class="neon-y">Usos de las prioridades</h3><p style="font-size:14px;line-height:1.8">Relación con clientes · desarrollo de nuevos servicios · surtido de pedidos · relación con proveedores.</p></div>'];
+function showCQ(i){[0,1,2].forEach(j=>document.getElementById('cqB'+j).classList.toggle('active-opt',j===i));document.getElementById('cqPanel').innerHTML=cqs[i];}
+showCQ(0);
+/* Chart aerolínea */
+let cAir=null;
+function initChartAir(){if(!window.Chart||cAir)return;cAir=new Chart(document.getElementById('chartAir'),{type:'bar',data:{labels:['Costo','Calidad superior','Calidad consistente','Entrega a tiempo'],datasets:[{label:'Primera clase (1-5)',data:[1,5,3,5],backgroundColor:'rgba(0,240,255,.7)',borderColor:'#00f0ff',borderWidth:2,borderRadius:8},{label:'Clase turista (1-5)',data:[5,2,4,4],backgroundColor:'rgba(255,46,196,.7)',borderColor:'#ff2ec4',borderWidth:2,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#d9f3fb'}}},scales:{x:{ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.06)'}},y:{beginAtZero:true,max:5,ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.08)'}}}}});}
+/* Three.js pirámide 4 niveles */
+let threeReady=false,threeFocus=-1,threeMeshes=[],threeGroup=null,threeRenderer,threeScene,threeCam;
+const defs3=[{col:0x00f0ff,d:'<b class="neon-c">CORPORATIVA:</b> visión-misión, objetivos-metas, análisis de mercado.'},{col:0xff2ec4,d:'<b class="neon-m">NEGOCIO:</b> integración con el entorno; producto-mercado y forma de actuación.'},{col:0xffe600,d:'<b class="neon-y">FUNCIONALES:</b> operaciones, marketing, finanzas.'},{col:0x39ff14,d:'<b class="neon-g">OPERACIONES:</b> gestiona procesos y cadena de valor; ubicación, capacidad, producto, procesos, planta, personas.'}];
+function initThree(){if(threeReady)return;if(!window.THREE)return;
+ try{const cv=document.getElementById('threeCanvas');const r=cv.getBoundingClientRect();const w=r.width||800,h=r.height||340;
+ threeRenderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});threeRenderer.setClearColor(0x000000,0);threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));threeRenderer.setSize(w,h,false);
+ threeScene=new THREE.Scene();threeCam=new THREE.PerspectiveCamera(50,w/h,.1,100);threeCam.position.set(0,1.2,7);threeCam.lookAt(0,0,0);
+ threeScene.add(new THREE.AmbientLight(0xffffff,.85));const p1=new THREE.PointLight(0x66ccff,1.2,80);p1.position.set(8,8,8);threeScene.add(p1);
+ const grid=new THREE.GridHelper(14,14,0x1b6fb0,0x0e3a66);grid.position.y=-1.9;threeScene.add(grid);
+ threeGroup=new THREE.Group();threeScene.add(threeGroup);
+ const sizes=[[0.9,0.55,0.9],[1.5,0.55,1.5],[2.1,0.55,2.1],[2.7,0.55,2.7]];
+ sizes.forEach((s,i)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(s[0],s[1],s[2]),new THREE.MeshPhongMaterial({color:defs3[i].col,emissive:defs3[i].col,emissiveIntensity:.35,shininess:90}));m.position.y=1.3-i*0.62;threeGroup.add(m);threeMeshes.push(m);});
+ let drag=false,px=0,py=0;
+ cv.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;});
+ cv.addEventListener('pointermove',e=>{if(!drag)return;threeGroup.rotation.y+=(e.clientX-px)*.008;threeGroup.rotation.x=Math.max(-1,Math.min(1,threeGroup.rotation.x+(e.clientY-py)*.004));px=e.clientX;py=e.clientY;});
+ ['pointerup','pointerleave'].forEach(ev=>cv.addEventListener(ev,()=>drag=false));
+ (function anim(t){requestAnimationFrame(anim);if(!drag)threeGroup.rotation.y+=.0035;
+  threeMeshes.forEach((m,i)=>{const tg=(threeFocus===i)?1.3:((threeFocus===-1)?1:.8);m.scale.lerp(new THREE.Vector3(tg,tg,tg),.08);m.material.emissiveIntensity+=(((threeFocus===i)?.75:.35)-m.material.emissiveIntensity)*.08;});
+  threeRenderer.render(threeScene,threeCam);})();
+ threeReady=true;}catch(e){}}
+function focus3D(i){threeFocus=(threeFocus===i)?-1:i;document.getElementById('threeDesc').innerHTML=threeFocus===-1?'<b class="neon-c">Escena 3D:</b> la base (operaciones) sostiene a la cima (corporativa).':defs3[i].d;}
+function onSlideEnter(i){const id=slides[i].id;
+ if(id==='s7')drawSC(+document.getElementById('scSlider').value);
+ if(id==='s9')drawAl(+document.getElementById('alSlider').value);
+ if(id==='s14')setTimeout(initChartAir,120);
+ if(id==='s15')setTimeout(initThree,120);}
+addEventListener('resize',()=>{const id=slides[current].id;if(id==='s7')drawSC(+document.getElementById('scSlider').value);if(id==='s9')drawAl(+document.getElementById('alSlider').value);if(id==='s15'&&threeRenderer){const r=document.getElementById('threeCanvas').getBoundingClientRect();threeRenderer.setSize(r.width,r.height,false);threeCam.aspect=r.width/r.height;threeCam.updateProjectionMatrix();}});
+goTo(0);
+</script>
+</body>
+</html>
