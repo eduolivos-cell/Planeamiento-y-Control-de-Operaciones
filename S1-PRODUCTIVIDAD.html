@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCO — Productividad (Teoría)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>if(!window.THREE){document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');}</script>
+<style>
+:root{--bg:#04040a;--cyan:#00f0ff;--magenta:#ff2ec4;--yellow:#ffe600;--green:#39ff14;--orange:#ff9500;--purple:#a855f7;--usil:#0b5cab;--gold:#c9a24b;--card:rgba(255,255,255,.05);--border:rgba(0,240,255,.25)}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
+body{background:var(--bg);color:#eaf6ff;font-family:'Segoe UI',system-ui,Arial,sans-serif;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1100px 600px at 82% -10%,rgba(0,240,255,.13),transparent 60%),radial-gradient(900px 520px at 8% 110%,rgba(255,46,196,.11),transparent 60%),radial-gradient(700px 420px at 50% 55%,rgba(168,85,247,.08),transparent 60%);animation:hue 14s ease-in-out infinite alternate}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:radial-gradient(1.5px 1.5px at 25% 35%,rgba(0,240,255,.8) 50%,transparent 51%),radial-gradient(1.5px 1.5px at 75% 65%,rgba(255,46,196,.8) 50%,transparent 51%),radial-gradient(1.2px 1.2px at 50% 20%,rgba(255,230,0,.8) 50%,transparent 51%),radial-gradient(1.2px 1.2px at 12% 78%,rgba(57,255,20,.7) 50%,transparent 51%);background-size:340px 340px,420px 420px,260px 260px,380px 380px;animation:drift 90s linear infinite}
+@keyframes hue{to{filter:hue-rotate(40deg)}}@keyframes drift{to{background-position:340px 680px,-420px 840px,260px -520px,-380px 760px}}
+header{position:fixed;top:0;left:0;right:0;height:64px;z-index:50;display:flex;align-items:center;gap:14px;padding:0 18px;background:rgba(5,6,16,.93);border-bottom:1px solid var(--border)}
+#logoWrap{background:#fff;border-radius:10px;padding:3px 10px;display:flex;align-items:center;flex-shrink:0}#logoWrap img{height:42px;display:block}
+.brand{font-weight:800;font-size:15px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.head-info{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;font-size:12px}
+.chip{padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--cyan);background:rgba(0,240,255,.06);font-weight:600}
+.chip.doc{border-color:rgba(255,46,196,.45);color:var(--magenta);background:rgba(255,46,196,.07)}
+#progress{position:fixed;top:64px;left:0;height:3px;width:0;z-index:60;background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--yellow));box-shadow:0 0 14px var(--cyan);transition:width .45s}
+#stage{position:fixed;inset:64px 0 78px 0;z-index:10}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .55s;overflow-y:auto;padding:28px 5vw 60px}
+.slide.active{opacity:1;pointer-events:auto}
+h1.big{font-size:clamp(28px,4.8vw,58px);line-height:1.05;font-weight:900;background:linear-gradient(90deg,var(--cyan) 10%,var(--magenta) 55%,var(--yellow) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(0,240,255,.35))}
+h2.sec{font-size:clamp(22px,3.2vw,34px);font-weight:900;margin-bottom:6px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:#9fd8e8;font-size:15px;margin-bottom:18px;max-width:920px;line-height:1.5}
+.kicker{display:inline-block;font-size:12px;letter-spacing:3px;color:var(--yellow);border:1px solid rgba(255,230,0,.4);padding:5px 14px;border-radius:20px;margin-bottom:14px;background:rgba(255,230,0,.06);text-transform:uppercase;font-weight:700}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;backdrop-filter:blur(6px)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.neon-c{color:var(--cyan)}.neon-m{color:var(--magenta)}.neon-y{color:var(--yellow)}.neon-g{color:var(--green)}.neon-o{color:var(--orange)}.neon-p{color:var(--purple)}
+.tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:14px;margin:3px 4px 3px 0;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05)}
+.btn{cursor:pointer;border:1px solid var(--cyan);color:var(--cyan);background:rgba(0,240,255,.07);padding:10px 22px;border-radius:10px;font-size:15px;font-weight:700;text-transform:uppercase;transition:.25s;text-decoration:none;display:inline-block}
+.btn:hover{background:rgba(0,240,255,.2);box-shadow:0 0 18px rgba(0,240,255,.5);transform:translateY(-2px)}
+.btn.mg{border-color:var(--magenta);color:var(--magenta);background:rgba(255,46,196,.07)}.btn.yl{border-color:var(--yellow);color:var(--yellow);background:rgba(255,230,0,.07)}.btn.gr{border-color:var(--green);color:var(--green);background:rgba(57,255,20,.07)}
+.btn.sm{padding:6px 14px;font-size:12.5px}.btn.active-opt{background:rgba(0,240,255,.28);box-shadow:0 0 16px rgba(0,240,255,.55)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--cyan),var(--magenta));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--yellow);border:2px solid #000;box-shadow:0 0 12px var(--yellow);cursor:pointer}
+footer{position:fixed;bottom:0;left:0;right:0;height:78px;z-index:50;display:flex;align-items:center;gap:16px;padding:0 22px;background:rgba(5,6,16,.93);border-top:1px solid var(--border)}
+#slideSlider{flex:1}#slideCounter{font-size:13px;color:#9fd8e8;min-width:64px;text-align:center;font-weight:700}
+.stat{font-size:26px;font-weight:900}.stat-lbl{font-size:11.5px;letter-spacing:1.5px;color:#8fb8c6;text-transform:uppercase}
+.tl-item{cursor:pointer;transition:.25s}.tl-item:hover{transform:translateY(-3px);box-shadow:0 0 20px rgba(0,240,255,.25)}
+canvas.view{width:100%;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,10,.5)}
+.center{text-align:center}
+.note{border-left:4px solid var(--yellow);background:rgba(255,230,0,.06);padding:10px 14px;border-radius:0 10px 10px 0;font-size:13.5px;color:#f2ecc0;margin-top:12px}
+.katex{color:#fff}
+.flash .ans{display:none;margin-top:10px;border-left:3px solid var(--green);padding:8px 12px;background:rgba(57,255,20,.08);color:#c9ffd9;font-size:13.5px}
+.flash.open .ans{display:block}
+.aviso{border:2px dashed var(--magenta);background:rgba(255,46,196,.08);border-radius:14px;padding:18px;font-size:17px;font-weight:800;color:var(--magenta);text-align:center;box-shadow:0 0 24px rgba(255,46,196,.25)}
+</style>
+</head>
+<body>
+<header>
+ <div id="logoWrap"><img src="USIL_logo.png" alt="USIL 30 años" onerror="this.onerror=null;this.style.display='none';document.getElementById('logoFallback').style.display='block';">
+  <svg id="logoFallback" viewBox="0 0 250 90" height="42" style="display:none"><text x="2" y="64" font-size="54" font-weight="700" fill="none" stroke="#c9a24b" stroke-width="2.5" font-family="Georgia,serif">30</text><circle cx="88" cy="36" r="24" fill="none" stroke="#c9a24b" stroke-width="3"/><text x="88" y="42" font-size="14" fill="#c9a24b" text-anchor="middle" font-family="Georgia,serif">años</text><text x="118" y="68" font-size="56" font-weight="800" fill="#0b5cab" font-family="Georgia,serif" font-style="italic">USIL</text></svg></div>
+ <div class="brand">⚙ PLANEAMIENTO Y CONTROL DE OPERACIONES · TEORÍA</div>
+ <div class="head-info"><span class="chip">Sesión 1 · Productividad</span><span class="chip doc">👷 Eduardo Olivos</span></div>
+</header>
+<div id="progress"></div>
+<div id="stage">
+
+<section class="slide active" id="s0"><div style="min-height:82%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+ <span class="kicker">Sesión 01 · Material 2 · 2026-II</span>
+ <h1 class="big">PRODUCTIVIDAD</h1>
+ <p class="sub center" style="margin-top:14px">La relación entre <b class="neon-c">bienes y servicios producidos</b> y los <b class="neon-m">recursos utilizados</b>: medir para mejorar.</p>
+ <div class="card"><b class="neon-y">Curso:</b> Planeamiento y Control de Operaciones | <b class="neon-y">Docente:</b> Eduardo Olivos</div>
+ <div class="btnrow" style="justify-content:center;margin-top:26px"><button class="btn" onclick="goTo(1)">▶ Iniciar la clase</button></div>
+</div></section>
+
+<section class="slide" id="s1"><span class="kicker">Hoja de ruta</span><h2 class="sec">🗺 Hoja de ruta de la sesión</h2>
+ <p class="sub">Haz clic en cada bloque (avanzamos al ritmo del grupo):</p>
+ <div class="grid g4">
+  <div class="card tl-item" onclick="goTo(2)"><div class="stat neon-c">🎯</div><div class="stat-lbl">Objetivos y reto</div></div>
+  <div class="card tl-item" onclick="goTo(4)"><div class="stat neon-y">📘</div><div class="stat-lbl">Definición y fórmula</div></div>
+  <div class="card tl-item" onclick="goTo(5)"><div class="stat neon-m">📏</div><div class="stat-lbl">Mediciones</div></div>
+  <div class="card tl-item" onclick="goTo(7)"><div class="stat neon-g">🔁</div><div class="stat-lbl">Ciclo de mejora</div></div>
+  <div class="card tl-item" onclick="goTo(8)"><div class="stat neon-o">🛞</div><div class="stat-lbl">Ejercicio 1 (llantas)</div></div>
+  <div class="card tl-item" onclick="goTo(10)"><div class="stat neon-p">🪵</div><div class="stat-lbl">Caso troncos/cajas</div></div>
+  <div class="card tl-item" onclick="goTo(12)"><div class="stat neon-c">🧮</div><div class="stat-lbl">Multifactor</div></div>
+  <div class="card tl-item" onclick="goTo(14)"><div class="stat neon-m">🧊</div><div class="stat-lbl">3D y repaso</div></div>
+ </div>
+ <div class="note">💡 <b>Repasa con este archivo:</b> todas las preguntas de la evaluación salen de aquí.</div>
+</section>
+
+<section class="slide" id="s2"><span class="kicker">Momento 1 · Utilidad</span><h2 class="sec">🎯 Objetivos y reto</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Objetivos de la sesión</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Conocer la <b>importancia de la productividad</b>.</li><li><b>Resolver ejercicios</b> de productividad parcial y multifactor.</li></ul>
+   <h3 class="neon-m" style="margin-top:14px">Reto</h3><p style="font-size:14px;line-height:1.6;margin-top:6px">🛞 <b>Fábrica de llantas:</b> 1500 llantas/día a $90 c/u, con 450 h‑hombre, 18 000 lb de MP y $6000 de energía. ¿Cuál es su productividad?</p></div>
+  <div class="card"><h3 class="neon-y">¿Por qué importa?</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Más producción con los mismos recursos = <b>competitividad</b>.</li><li>Medir permite <b>planificar la mejora</b>.</li><li>Base para decisiones de <b>PCO</b> (capacidad, costos, personal).</li></ul></div>
+ </div>
+</section>
+
+<section class="slide" id="s3"><span class="kicker">Innovación · Reflexión</span><h2 class="sec">👁 ¿Dónde se nota la productividad?</h2>
+ <p class="sub">Pulsa cada ámbito:</p>
+ <div class="btnrow" id="motBtns"></div>
+ <div class="card" id="motInfo" style="min-height:80px"><b class="neon-y">Selecciona un ámbito</b>.</div>
+</section>
+
+<section class="slide" id="s4"><span class="kicker">Definición</span><h2 class="sec">📘 ¿Qué es la productividad?</h2>
+ <div class="card" style="margin-bottom:14px"><p style="font-size:15px;line-height:1.6">Es la <b class="neon-c">relación entre la cantidad de bienes y servicios producidos</b> y la <b class="neon-m">cantidad de recursos utilizados</b>. Se valora en dinero para poder agregar insumos de distinta naturaleza.</p>
+ <h3 class="neon-y" style="margin-top:10px">Fórmula</h3>
+ $$Productividad=\frac{Bienes\ o\ servicios\ producidos}{Recursos\ utilizados\ (en\ \$)}$$</div>
+ <div class="note">📌 Al expresar ambos lados en <b>$</b>, podemos comparar y sumar mano de obra, materia prima y energía.</div>
+</section>
+
+<section class="slide" id="s5"><span class="kicker">Mediciones</span><h2 class="sec">📏 Productividad por recurso</h2>
+ <p class="sub">Pulsa cada medición:</p>
+ <div class="btnrow" id="medBtns"></div>
+ <div class="card" id="medInfo" style="min-height:90px"><b class="neon-y">Selecciona una medición</b>.</div>
+</section>
+
+<section class="slide" id="s6"><span class="kicker">Parcial vs. Multifactor</span><h2 class="sec">⚖ Dos formas de medir</h2>
+ <div class="btnrow">
+  <button class="btn sm active-opt" id="cmpB0" onclick="showCmp(0)">PARCIAL</button>
+  <button class="btn sm mg" id="cmpB1" onclick="showCmp(1)">MULTIFACTOR</button>
+  <button class="btn sm yl" id="cmpB2" onclick="showCmp(2)">¿CUÁL USAR?</button>
+ </div>
+ <div id="cmpPanel"></div>
+</section>
+
+<section class="slide" id="s7"><span class="kicker">Canvas 2D · Ciclo</span><h2 class="sec">🔁 Medir → Plan de mejora</h2>
+ <p class="sub">Mueve el <b>deslizador</b> y recorre el ciclo de gestión:</p>
+ <input type="range" id="cicSlider" min="0" max="6" value="0" style="width:100%;max-width:700px" oninput="drawCic(+this.value)">
+ <div class="card" id="cicLabel" style="margin:10px 0;min-height:46px"></div>
+ <canvas id="cicCanvas" class="view" style="height:220px"></canvas>
+</section>
+
+<section class="slide" id="s8"><span class="kicker">Ejercicio 1 · Llantas</span><h2 class="sec">🛞 Datos y cálculos</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Datos</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Producción: <b>1500 llantas/día</b> a <b>$90</b> c/u → Salida = $135 000.</li><li>Mano de obra: 450 h a $11.50 → <b>$5175</b>.</li><li>Materia prima: 18 000 lb a $1 → <b>$18 000</b>.</li><li>Energía: <b>$6000</b>/día.</li></ul></div>
+  <div class="card"><h3 class="neon-y">Resultados (pulsa para verificar)</h3>
+   <div class="flash"><b class="neon-c">P. mano de obra (unidades)</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">\(1500/450 = 3.33\) llantas por hora‑hombre.</div></div>
+   <div class="flash"><b class="neon-m">P. mano de obra ($)</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">\(135000/5175 \approx 26.09\).</div></div>
+   <div class="flash"><b class="neon-g">P. materia prima ($)</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">\(135000/18000 = 7.50\).</div></div>
+   <div class="flash"><b class="neon-o">P. energía ($)</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">\(135000/6000 = 22.50\).</div></div>
+   <div class="flash"><b class="neon-p">P. multifactor</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">\(135000/(5175+18000+6000)=135000/29175 \approx 4.63\).</div></div>
+  </div>
+ </div>
+</section>
+
+<section class="slide" id="s9"><span class="kicker">Chart.js · Ej. 1</span><h2 class="sec">📈 Productividades parciales ($/$)</h2>
+ <div class="grid g2">
+  <div class="card"><canvas id="chartParc" style="height:260px"></canvas></div>
+  <div class="card"><h3 class="neon-y">Lectura</h3><ul style="font-size:13.5px;line-height:2;padding-left:18px"><li>Cada $ de <b>mano de obra</b> genera $26.09 de producción.</li><li>Cada $ de <b>energía</b> genera $22.50.</li><li>Cada $ de <b>MP</b> genera $7.50 → foco de mejora.</li><li>Multifactor: <b>4.63</b> ($ de salida por $ de insumo total).</li></ul></div>
+ </div>
+</section>
+
+<section class="slide" id="s10"><span class="kicker">Caso · Troncos y cajas</span><h2 class="sec">🪵 ¿Conviene el comprador profesional?</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Situación</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li><b>Actual:</b> 240 cajas por 100 troncos con 40 h/día.</li><li><b>Con comprador:</b> 260 cajas por 100 troncos; las horas suben en 8 → <b>48 h/día</b>.</li><li>El gerente afirma: “mi productividad aumenta 10%”.</li></ul></div>
+  <div class="card flash"><b class="neon-y">🤔 Analice en cajas por hora: ¿qué opina?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Actual: \(240/40 = 6.00\) cajas/h. Con comprador: \(260/48 \approx 5.42\) cajas/h. <b>Disminuye ≈ 9.7%</b>; el “+10%” no se sostiene en cajas/hora (solo suben las cajas por tronco, y aun eso es +8.3%).</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s11"><span class="kicker">Chart.js + KaTeX · Caso</span><h2 class="sec">📉 Variación de productividad</h2>
+ <div class="grid g2">
+  <div class="card"><canvas id="chartCajas" style="height:260px"></canvas></div>
+  <div class="card"><h3 class="neon-y">Fórmula de variación</h3>
+   $$\%\Delta P=\frac{P_{desp}-P_{antes}}{P_{antes}}\times100=\frac{5.42-6.00}{6.00}\times100\approx-9.7\%$$
+   <div class="note">⚠ Medir con la <b>unidad correcta</b> cambia la decisión: en cajas/hora la propuesta empeora el sistema.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s12"><span class="kicker">Perspectiva multifactor</span><h2 class="sec">🧮 Ejercicio 2: todos los insumos</h2>
+ <div class="card" style="margin-bottom:14px"><p style="font-size:14.5px;line-height:1.6">El gerente decide observar su productividad desde una <b class="neon-c">perspectiva de múltiples factores</b>: relaciona la producción con <b>todos</b> los insumos valorizados (mano de obra + materia prima + energía + capital), no con uno solo.</p></div>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-m">¿Qué revela?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">El efecto conjunto de todas las entradas; evita optimizar un recurso empeorando otro.</div></div>
+  <div class="card flash"><b class="neon-g">Interpretación de P = 4.63</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Cada <b>$1</b> invertido en insumos genera ≈ <b>$4.63</b> de bienes: el sistema crea valor.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s13"><span class="kicker">Plan de mejora</span><h2 class="sec">🚀 ¿Cómo subir la productividad?</h2>
+ <div class="grid g3">
+  <div class="card flash"><b class="neon-c">Capacitación</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Personal actualizado en tecnologías y sistemas de gestión (ISO) incrementa productividad y calidad.</div></div>
+  <div class="card flash"><b class="neon-m">Tecnología/métodos</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Mejores métodos de trabajo y equipos elevan la salida sin subir recursos en la misma proporción.</div></div>
+  <div class="card flash"><b class="neon-g">Medición continua</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Productividad → Medición → Plan de Mejora → nueva Medición: ciclo permanente.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s14"><span class="kicker">Three.js · 3D</span><h2 class="sec">🧊 Insumos → Producción</h2>
+ <p class="sub">Cada figura es un recurso del Ejercicio 1; pulsa para ver su aporte:</p>
+ <div class="btnrow">
+  <button class="btn sm" onclick="focus3D(0)">Producción</button>
+  <button class="btn sm mg" onclick="focus3D(1)">Mano de obra</button>
+  <button class="btn sm yl" onclick="focus3D(2)">Materia prima</button>
+  <button class="btn sm" style="border-color:var(--orange);color:var(--orange)" onclick="focus3D(3)">Energía</button>
+ </div>
+ <canvas id="threeCanvas" class="view" style="height:320px"></canvas>
+ <div class="card" id="threeDesc" style="margin-top:12px"><b class="neon-c">Escena 3D:</b> la esfera (salida $135 000) se sostiene en los tres insumos ($29 175) → P ≈ 4.63.</div>
+</section>
+
+<section class="slide" id="s15"><span class="kicker">Repaso · respuestas ocultas</span><h2 class="sec">🎯 Tarjetas de repaso</h2>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-c">1.</b> ¿Qué es la productividad?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Relación entre bienes/servicios producidos y recursos utilizados.</div></div>
+  <div class="card flash"><b class="neon-m">2.</b> ¿Qué mide la productividad parcial?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">La producción respecto de UN recurso: materia prima, mano de obra o máquinas.</div></div>
+  <div class="card flash"><b class="neon-y">3.</b> Multifactor del Ej. 1<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">≈ 4.63 ($ de salida por cada $ de insumo total).</div></div>
+  <div class="card flash"><b class="neon-g">4.</b> Caso troncos en cajas/h<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Baja de 6.00 a ≈5.42 cajas/h (−9.7%): el “+10%” no se cumple en esa unidad.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s16"><span class="kicker">Síntesis</span><h2 class="sec">📈 Ideas fuerza</h2>
+ <div class="grid g3">
+  <div class="card"><b class="neon-c">Definición</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Salida / entrada, valorizada en $.</p></div>
+  <div class="card"><b class="neon-m">Medición</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Parcial (MP, MO, máquinas) y multifactor.</p></div>
+  <div class="card"><b class="neon-g">Gestión</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Medir → analizar → plan de mejora → volver a medir.</p></div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3 class="neon-y">📚 Referencias</h3><p style="font-size:13px;line-height:1.9;color:#bfe9f5">Heizer & Render · Chase, Jacobs & Aquilano · Material de clase PCO‑USIL.</p></div>
+</section>
+
+<section class="slide" id="s17"><div style="min-height:80%;display:flex;flex-direction:column;justify-content:center">
+ <span class="kicker">Cierre</span><h2 class="sec">🏁 Conclusiones</h2>
+ <div class="grid g4" style="margin:16px 0">
+  <div class="card"><b class="neon-c">Relación</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Producidos / recursos usados.</p></div>
+  <div class="card"><b class="neon-m">Unidad</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Elegir la unidad correcta evita malas decisiones.</p></div>
+  <div class="card"><b class="neon-g">Multifactor</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Visión completa de los insumos.</p></div>
+  <div class="card"><b class="neon-y">Mejora</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Capacitación, tecnología y medición continua.</p></div>
+ </div>
+ <div class="aviso" style="margin-top:26px">📢 ESTÉN ATENTOS AL INICIO DE LA EVALUACIÓN EN CLASE</div>
+ <p class="center" style="margin-top:16px;font-size:20px;font-weight:900;background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent">¡MUCHAS GRACIAS! ⚙✨</p>
+</div></section>
+</div>
+
+<footer>
+ <button class="btn sm" onclick="goTo(current-1)">◀ Anterior</button>
+ <input type="range" id="slideSlider" min="0" max="17" value="0" oninput="goTo(+this.value)">
+ <button class="btn sm" onclick="goTo(current+1)">Siguiente ▶</button>
+ <span id="slideCounter">1 / 18</span>
+</footer>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];let current=0;
+const slider=document.getElementById('slideSlider');slider.max=slides.length-1;
+function goTo(i){if(i<0||i>=slides.length)return;slides[current].classList.remove('active');current=i;slides[current].classList.add('active');slides[current].scrollTop=0;slider.value=i;document.getElementById('slideCounter').textContent=(i+1)+' / '+slides.length;document.getElementById('progress').style.width=(i/(slides.length-1)*100)+'%';onSlideEnter(i);}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;if(e.key==='ArrowRight')goTo(current+1);if(e.key==='ArrowLeft')goTo(current-1);});
+function makeBtns(id,infoId,data){const c=document.getElementById(id);data.forEach((d,i)=>{const b=document.createElement('button');b.className='btn sm'+(i%2?' mg':'');b.textContent=d[0];b.onclick=()=>{c.querySelectorAll('.btn').forEach(x=>x.classList.remove('active-opt'));b.classList.add('active-opt');document.getElementById(infoId).innerHTML='<b class="neon-c">'+d[0]+'</b><p style="margin-top:6px;font-size:14px;color:#d9f3fb">'+d[1]+'</p>';};c.appendChild(b);});}
+makeBtns('motBtns','motInfo',[['Empresa','Más salida con los mismos recursos → menores costos y mayor competitividad.'],['País','La productividad nacional determina crecimiento y bienestar.'],['Persona','Mejores métodos = más valor por hora trabajada.']]);
+makeBtns('medBtns','medInfo',[['Materia prima','Productividad(MP) = producción / $ de materia prima. En el Ej.1: 7.50.'],['Mano de obra','Productividad(MO) = producción / $ (o horas) de mano de obra. En el Ej.1: 26.09 ($/$) o 3.33 llantas/h.'],['Máquinas','Productividad(máq.) = producción / horas‑máquina o $ de capital.'],['Medición total','Productividad → Medición → Plan de Mejora: el ciclo de gestión.']]);
+/* Parcial vs multifactor */
+const cmps=['<div class="card"><h3 class="neon-c">PARCIAL</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Relaciona la producción con <b>UN</b> recurso.</li><li>Tipos: materia prima, mano de obra, máquinas.</li><li>Útil para atacar un recurso específico.</li></ul></div>','<div class="card"><h3 class="neon-m">MULTIFACTOR</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Relaciona la producción con <b>TODOS</b> los insumos valorizados.</li><li>En el Ej.1: 135 000 / 29 175 ≈ <b>4.63</b>.</li><li>Evita optimizar un recurso empeorando otro.</li></ul></div>','<div class="card"><h3 class="neon-y">¿CUÁL USAR?</h3><p style="font-size:14px;line-height:1.8">Parcial para diagnósticos por recurso; multifactor para la visión económica total. Ambas alimentan el <b>plan de mejora</b>.</p></div>'];
+function showCmp(i){[0,1,2].forEach(j=>document.getElementById('cmpB'+j).classList.toggle('active-opt',j===i));document.getElementById('cmpPanel').innerHTML=cmps[i];}
+showCmp(0);
+/* Ciclo canvas */
+const cicSteps=['Paso 0 — Mueve el deslizador.','1 — Se DEFINE la productividad a medir.','2 — Se MIDE (parcial y multifactor).','3 — Se ANALIZA contra metas o historia.','4 — Se elabora el PLAN DE MEJORA.','5 — Se EJECUTA el plan.','6 — Se vuelve a MEDIR: ciclo continuo ✔.'];
+const cicNames=['Definir','Medir','Analizar','Plan','Ejecutar','Re‑medir'];
+function drawCic(s){const cv=document.getElementById('cicCanvas');const dpr=window.devicePixelRatio||1;const W=cv.clientWidth,H=220;cv.width=W*dpr;cv.height=H*dpr;const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);
+ const n=cicNames.length;
+ for(let i=0;i<Math.min(s,n);i++){const px=40+(W-80)*(i/(n-1));const y=100;
+  if(i>0){const pxx=40+(W-80)*((i-1)/(n-1));x.strokeStyle='#ffe600';x.lineWidth=2;x.beginPath();x.moveTo(pxx+26,y);x.lineTo(px-26,y);x.stroke();x.fillStyle='#ffe600';x.beginPath();x.moveTo(px-26,y);x.lineTo(px-34,y-4);x.lineTo(px-34,y+4);x.closePath();x.fill();}
+  x.save();x.shadowColor='#00f0ff';x.shadowBlur=12;x.fillStyle='rgba(0,240,255,.15)';x.strokeStyle='#00f0ff';x.lineWidth=2;x.beginPath();x.arc(px,y,24,0,Math.PI*2);x.fill();x.stroke();x.restore();
+  x.fillStyle='#eaf6ff';x.font='bold 11px Segoe UI';x.textAlign='center';x.fillText((i+1),px,y+4);
+  x.fillStyle='#9fd8e8';x.font='9px Segoe UI';x.fillText(cicNames[i],px,y+44);}
+ if(s>=6){x.strokeStyle='rgba(57,255,20,.6)';x.setLineDash([6,5]);x.beginPath();x.moveTo(40+(W-80),130);x.quadraticCurveTo(W/2,200,40,130);x.stroke();x.setLineDash([]);}
+ document.getElementById('cicLabel').innerHTML='<b class="neon-c">▶</b> '+cicSteps[s];}
+/* Charts */
+let cP=null,cC=null;
+function initChartParc(){if(!window.Chart||cP)return;cP=new Chart(document.getElementById('chartParc'),{type:'bar',data:{labels:['Mano de obra','Materia prima','Energía'],datasets:[{label:'$ salida por $ de recurso',data:[26.09,7.5,22.5],backgroundColor:['rgba(0,240,255,.7)','rgba(255,46,196,.7)','rgba(255,149,0,.7)'],borderColor:['#00f0ff','#ff2ec4','#ff9500'],borderWidth:2,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#d9f3fb'}}},scales:{x:{ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.06)'}},y:{beginAtZero:true,ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.08)'}}}}});}
+function initChartCajas(){if(!window.Chart||cC)return;cC=new Chart(document.getElementById('chartCajas'),{type:'bar',data:{labels:['Actual','Con comprador'],datasets:[{label:'Cajas por hora‑hombre',data:[6.0,5.42],backgroundColor:['rgba(57,255,20,.7)','rgba(255,46,196,.7)'],borderColor:['#39ff14','#ff2ec4'],borderWidth:2,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#d9f3fb'}}},scales:{x:{ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.06)'}},y:{beginAtZero:true,max:7,ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.08)'}}}}});}
+/* Three.js */
+let threeReady=false,threeFocus=-1,threeMeshes=[],threeGroup=null,threeRenderer,threeScene,threeCam;
+const defs3=[{col:0x00f0ff,d:'<b class="neon-c">PRODUCCIÓN (esfera):</b> 1500 llantas × $90 = $135 000 de salida.'},{col:0xff2ec4,d:'<b class="neon-m">MANO DE OBRA (cubo):</b> 450 h × $11.50 = $5175.'},{col:0xffe600,d:'<b class="neon-y">MATERIA PRIMA (cilindro):</b> 18 000 lb × $1 = $18 000.'},{col:0xff9500,d:'<b class="neon-o">ENERGÍA (cono):</b> $6000/día. Total insumos = $29 175 → P ≈ 4.63.'}];
+function initThree(){if(threeReady)return;if(!window.THREE)return;
+ try{const cv=document.getElementById('threeCanvas');const r=cv.getBoundingClientRect();const w=r.width||800,h=r.height||320;
+ threeRenderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});threeRenderer.setClearColor(0x000000,0);threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));threeRenderer.setSize(w,h,false);
+ threeScene=new THREE.Scene();threeCam=new THREE.PerspectiveCamera(50,w/h,.1,100);threeCam.position.set(0,1.5,8);threeCam.lookAt(0,0,0);
+ threeScene.add(new THREE.AmbientLight(0xffffff,.85));const p1=new THREE.PointLight(0x66ccff,1.2,80);p1.position.set(8,8,8);threeScene.add(p1);
+ const grid=new THREE.GridHelper(16,16,0x1b6fb0,0x0e3a66);grid.position.y=-2;threeScene.add(grid);
+ threeGroup=new THREE.Group();threeScene.add(threeGroup);
+ const geos=[new THREE.SphereGeometry(.95,32,32),new THREE.BoxGeometry(1.2,1.2,1.2),new THREE.CylinderGeometry(.6,.6,1.4,24),new THREE.ConeGeometry(.7,1.4,24)];
+ geos.forEach((g,i)=>{const m=new THREE.Mesh(g,new THREE.MeshPhongMaterial({color:defs3[i].col,emissive:defs3[i].col,emissiveIntensity:.35,shininess:90}));m.position.set((i-1.5)*2.6,i===0?0.4:-0.4,0);threeGroup.add(m);threeMeshes.push(m);});
+ let drag=false,px=0,py=0;
+ cv.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;});
+ cv.addEventListener('pointermove',e=>{if(!drag)return;threeGroup.rotation.y+=(e.clientX-px)*.008;threeGroup.rotation.x=Math.max(-1,Math.min(1,threeGroup.rotation.x+(e.clientY-py)*.004));px=e.clientX;py=e.clientY;});
+ ['pointerup','pointerleave'].forEach(ev=>cv.addEventListener(ev,()=>drag=false));
+ (function anim(t){requestAnimationFrame(anim);if(!drag)threeGroup.rotation.y+=.0035;
+  threeMeshes.forEach((m,i)=>{m.position.y+= (Math.sin((t||0)*.0012+i*1.3)*.25+(i===0?0.4:-0.4)-m.position.y)*.1;if(i>0)m.rotation.y+=.01;const tg=(threeFocus===i)?1.45:((threeFocus===-1)?1:.7);m.scale.lerp(new THREE.Vector3(tg,tg,tg),.08);m.material.emissiveIntensity+=(((threeFocus===i)?.75:.35)-m.material.emissiveIntensity)*.08;});
+  threeRenderer.render(threeScene,threeCam);})();
+ threeReady=true;}catch(e){}}
+function focus3D(i){threeFocus=(threeFocus===i)?-1:i;document.getElementById('threeDesc').innerHTML=threeFocus===-1?'<b class="neon-c">Escena 3D:</b> la esfera (salida $135 000) se sostiene en los tres insumos ($29 175) → P ≈ 4.63.':defs3[i].d;}
+function onSlideEnter(i){const id=slides[i].id;
+ if(id==='s7')drawCic(+document.getElementById('cicSlider').value);
+ if(id==='s9')setTimeout(initChartParc,120);
+ if(id==='s11')setTimeout(initChartCajas,120);
+ if(id==='s14')setTimeout(initThree,120);}
+addEventListener('resize',()=>{const id=slides[current].id;if(id==='s7')drawCic(+document.getElementById('cicSlider').value);if(id==='s14'&&threeRenderer){const r=document.getElementById('threeCanvas').getBoundingClientRect();threeRenderer.setSize(r.width,r.height,false);threeCam.aspect=r.width/r.height;threeCam.updateProjectionMatrix();}});
+goTo(0);
+</script>
+</body>
+</html>
