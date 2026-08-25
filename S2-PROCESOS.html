@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCO — Sesión 2: Procesos (Teoría)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>if(!window.THREE){document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');}</script>
+<style>
+:root{--bg:#04040a;--cyan:#00f0ff;--magenta:#ff2ec4;--yellow:#ffe600;--green:#39ff14;--orange:#ff9500;--purple:#a855f7;--usil:#0b5cab;--gold:#c9a24b;--card:rgba(255,255,255,.05);--border:rgba(0,240,255,.25)}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
+body{background:var(--bg);color:#eaf6ff;font-family:'Segoe UI',system-ui,Arial,sans-serif;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1100px 600px at 82% -10%,rgba(0,240,255,.13),transparent 60%),radial-gradient(900px 520px at 8% 110%,rgba(255,46,196,.11),transparent 60%),radial-gradient(700px 420px at 50% 55%,rgba(168,85,247,.08),transparent 60%);animation:hue 14s ease-in-out infinite alternate}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:radial-gradient(1.5px 1.5px at 25% 35%,rgba(0,240,255,.8) 50%,transparent 51%),radial-gradient(1.5px 1.5px at 75% 65%,rgba(255,46,196,.8) 50%,transparent 51%),radial-gradient(1.2px 1.2px at 50% 20%,rgba(255,230,0,.8) 50%,transparent 51%),radial-gradient(1.2px 1.2px at 12% 78%,rgba(57,255,20,.7) 50%,transparent 51%);background-size:340px 340px,420px 420px,260px 260px,380px 380px;animation:drift 90s linear infinite}
+@keyframes hue{to{filter:hue-rotate(40deg)}}@keyframes drift{to{background-position:340px 680px,-420px 840px,260px -520px,-380px 760px}}
+header{position:fixed;top:0;left:0;right:0;height:64px;z-index:50;display:flex;align-items:center;gap:14px;padding:0 18px;background:rgba(5,6,16,.93);border-bottom:1px solid var(--border)}
+#logoWrap{background:#fff;border-radius:10px;padding:3px 10px;display:flex;align-items:center;flex-shrink:0}#logoWrap img{height:42px;display:block}
+.brand{font-weight:800;font-size:15px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.head-info{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;font-size:12px}
+.chip{padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--cyan);background:rgba(0,240,255,.06);font-weight:600}
+.chip.doc{border-color:rgba(255,46,196,.45);color:var(--magenta);background:rgba(255,46,196,.07)}
+#progress{position:fixed;top:64px;left:0;height:3px;width:0;z-index:60;background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--yellow));box-shadow:0 0 14px var(--cyan);transition:width .45s}
+#stage{position:fixed;inset:64px 0 78px 0;z-index:10}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .55s;overflow-y:auto;padding:28px 5vw 60px}
+.slide.active{opacity:1;pointer-events:auto}
+h1.big{font-size:clamp(28px,4.8vw,58px);line-height:1.05;font-weight:900;background:linear-gradient(90deg,var(--cyan) 10%,var(--magenta) 55%,var(--yellow) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(0,240,255,.35))}
+h2.sec{font-size:clamp(22px,3.2vw,34px);font-weight:900;margin-bottom:6px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:#9fd8e8;font-size:15px;margin-bottom:18px;max-width:920px;line-height:1.5}
+.kicker{display:inline-block;font-size:12px;letter-spacing:3px;color:var(--yellow);border:1px solid rgba(255,230,0,.4);padding:5px 14px;border-radius:20px;margin-bottom:14px;background:rgba(255,230,0,.06);text-transform:uppercase;font-weight:700}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;backdrop-filter:blur(6px)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.neon-c{color:var(--cyan)}.neon-m{color:var(--magenta)}.neon-y{color:var(--yellow)}.neon-g{color:var(--green)}.neon-o{color:var(--orange)}.neon-p{color:var(--purple)}
+.tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:14px;margin:3px 4px 3px 0;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05)}
+.btn{cursor:pointer;border:1px solid var(--cyan);color:var(--cyan);background:rgba(0,240,255,.07);padding:10px 22px;border-radius:10px;font-size:15px;font-weight:700;text-transform:uppercase;transition:.25s;text-decoration:none;display:inline-block}
+.btn:hover{background:rgba(0,240,255,.2);box-shadow:0 0 18px rgba(0,240,255,.5);transform:translateY(-2px)}
+.btn.mg{border-color:var(--magenta);color:var(--magenta);background:rgba(255,46,196,.07)}.btn.yl{border-color:var(--yellow);color:var(--yellow);background:rgba(255,230,0,.07)}.btn.gr{border-color:var(--green);color:var(--green);background:rgba(57,255,20,.07)}
+.btn.sm{padding:6px 14px;font-size:12.5px}.btn.active-opt{background:rgba(0,240,255,.28);box-shadow:0 0 16px rgba(0,240,255,.55)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--cyan),var(--magenta));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--yellow);border:2px solid #000;box-shadow:0 0 12px var(--yellow);cursor:pointer}
+footer{position:fixed;bottom:0;left:0;right:0;height:78px;z-index:50;display:flex;align-items:center;gap:16px;padding:0 22px;background:rgba(5,6,16,.93);border-top:1px solid var(--border)}
+#slideSlider{flex:1}#slideCounter{font-size:13px;color:#9fd8e8;min-width:64px;text-align:center;font-weight:700}
+.stat{font-size:26px;font-weight:900}.stat-lbl{font-size:11.5px;letter-spacing:1.5px;color:#8fb8c6;text-transform:uppercase}
+.tl-item{cursor:pointer;transition:.25s}.tl-item:hover{transform:translateY(-3px);box-shadow:0 0 20px rgba(0,240,255,.25)}
+canvas.view{width:100%;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,10,.5)}
+.center{text-align:center}
+.note{border-left:4px solid var(--yellow);background:rgba(255,230,0,.06);padding:10px 14px;border-radius:0 10px 10px 0;font-size:13.5px;color:#f2ecc0;margin-top:12px}
+.katex{color:#fff}
+.flash .ans{display:none;margin-top:10px;border-left:3px solid var(--green);padding:8px 12px;background:rgba(57,255,20,.08);color:#c9ffd9;font-size:13.5px}
+.flash.open .ans{display:block}
+.aviso{border:2px dashed var(--magenta);background:rgba(255,46,196,.08);border-radius:14px;padding:18px;font-size:17px;font-weight:800;color:var(--magenta);text-align:center;box-shadow:0 0 24px rgba(255,46,196,.25)}
+</style>
+</head>
+<body>
+<header>
+ <div id="logoWrap"><img src="USIL_logo.png" alt="USIL 30 años" onerror="this.onerror=null;this.style.display='none';document.getElementById('logoFallback').style.display='block';">
+  <svg id="logoFallback" viewBox="0 0 250 90" height="42" style="display:none"><text x="2" y="64" font-size="54" font-weight="700" fill="none" stroke="#c9a24b" stroke-width="2.5" font-family="Georgia,serif">30</text><circle cx="88" cy="36" r="24" fill="none" stroke="#c9a24b" stroke-width="3"/><text x="88" y="42" font-size="14" fill="#c9a24b" text-anchor="middle" font-family="Georgia,serif">años</text><text x="118" y="68" font-size="56" font-weight="800" fill="#0b5cab" font-family="Georgia,serif" font-style="italic">USIL</text></svg></div>
+ <div class="brand">⚙ PLANEAMIENTO Y CONTROL DE OPERACIONES · TEORÍA</div>
+ <div class="head-info"><span class="chip">Sesión 2 · Procesos</span><span class="chip doc">👷 Eduardo Olivos</span></div>
+</header>
+<div id="progress"></div>
+<div id="stage">
+
+<section class="slide active" id="s0"><div style="min-height:82%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+ <span class="kicker">Sesión 02 · 2026-II</span>
+ <h1 class="big">PROCESOS</h1>
+ <p class="sub center" style="margin-top:14px">Concepto, <b class="neon-c">visión de procesos</b>, bienes vs. servicios y <b class="neon-m">estrategia de procesos</b>.</p>
+ <div class="card"><b class="neon-y">Curso:</b> Planeamiento y Control de Operaciones | <b class="neon-y">Docente:</b> Eduardo Olivos</div>
+ <div class="btnrow" style="justify-content:center;margin-top:26px"><button class="btn" onclick="goTo(1)">▶ Iniciar la clase</button></div>
+</div></section>
+
+<section class="slide" id="s1"><span class="kicker">Hoja de ruta</span><h2 class="sec">🗺 Hoja de ruta de la sesión</h2>
+ <p class="sub">Haz clic en cada bloque (avanzamos al ritmo del grupo):</p>
+ <div class="grid g4">
+  <div class="card tl-item" onclick="goTo(2)"><div class="stat neon-c">🎯</div><div class="stat-lbl">Objetivos y reto</div></div>
+  <div class="card tl-item" onclick="goTo(4)"><div class="stat neon-y">🧩</div><div class="stat-lbl">Visión de procesos</div></div>
+  <div class="card tl-item" onclick="goTo(5)"><div class="stat neon-m"></div><div class="stat-lbl">Transformación y valor</div></div>
+  <div class="card tl-item" onclick="goTo(7)"><div class="stat neon-o">🆚</div><div class="stat-lbl">Bienes vs. servicios</div></div>
+  <div class="card tl-item" onclick="goTo(9)"><div class="stat neon-g">🧭</div><div class="stat-lbl">Estrategia de procesos</div></div>
+  <div class="card tl-item" onclick="goTo(11)"><div class="stat neon-p">🏭</div><div class="stat-lbl">Matriz producto‑proceso</div></div>
+  <div class="card tl-item" onclick="goTo(13)"><div class="stat neon-c">📈</div><div class="stat-lbl">Costo‑volumen y herramientas</div></div>
+  <div class="card tl-item" onclick="goTo(16)"><div class="stat neon-m">🎯</div><div class="stat-lbl">Repaso y cierre</div></div>
+ </div>
+ <div class="note">💡 <b>Repasa con este archivo:</b> todas las preguntas de la evaluación salen de aquí.</div>
+</section>
+
+<section class="slide" id="s2"><span class="kicker">Momento 1 · Utilidad</span><h2 class="sec">🎯 Objetivos y reto</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Objetivos de la sesión</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Identificar el <b>concepto de procesos</b>.</li><li>Reconocer los <b>procesos de una empresa</b>.</li></ul>
+   <h3 class="neon-m" style="margin-top:14px">Reto</h3><p style="font-size:14px;line-height:1.6;margin-top:6px">🏥 <b>Arnold Palmer Hospital / Kodak:</b> identifica los procesos y concluye qué agrega valor y qué es desperdicio.</p></div>
+  <div class="card"><h3 class="neon-y">¿Por qué importa?</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Ningún producto o servicio se ofrece <b>sin un proceso</b>.</li><li>Cada proceso debe <b>agregar valor</b> al trabajo realizado.</li><li>La <b>estrategia de procesos</b> alcanza las prioridades competitivas.</li></ul></div>
+ </div>
+</section>
+
+<section class="slide" id="s3"><span class="kicker">Innovación · Reflexión</span><h2 class="sec">🎬 La lección de Kodak</h2>
+ <p class="sub">Del video y el caso del hospital, pulsa cada reflexión:</p>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-c">¿Qué procesos identifica?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Procesos de atención, admisión, tratamiento y apoyo; cada uno con actividades que deben agregar valor al paciente/cliente.</div></div>
+  <div class="card flash"><b class="neon-m">¿Qué conclusiones obtiene?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">No adaptarse al cambio de procesos/tecnología condena a la empresa; la <b>mejora continua</b> y la <b>reingeniería</b> son vitales.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s4"><span class="kicker">Visión de procesos</span><h2 class="sec">🧩 Niveles: macro → proceso → subproceso</h2>
+ <p class="sub">Pulsa cada nivel:</p>
+ <div class="btnrow" id="nivBtns"></div>
+ <div class="card" id="nivInfo" style="min-height:90px"><b class="neon-y">Selecciona un nivel</b>.</div>
+ <div class="card" style="margin-top:14px"><p style="font-size:14.5px;line-height:1.6">Un <b class="neon-c">proceso</b> es un conjunto de sub‑procesos con actividades <b>relacionadas lógicamente</b> y orientadas a un <b>objetivo común</b>, que usan los recursos de la empresa para transformar <b>entradas en salidas</b>. Implica <b>coordinación entre áreas</b>.</p></div>
+</section>
+
+<section class="slide" id="s5"><span class="kicker">Canvas 2D · Transformación</span><h2 class="sec">🔁 Entradas → Transformación → Salidas</h2>
+ <p class="sub">Mueve el <b>deslizador</b> y arma el sistema productivo:</p>
+ <input type="range" id="trSlider" min="0" max="5" value="0" style="width:100%;max-width:700px" oninput="drawTr(+this.value)">
+ <div class="card" id="trLabel" style="margin:10px 0;min-height:46px"></div>
+ <canvas id="trCanvas" class="view" style="height:240px"></canvas>
+ <div class="grid g2" style="margin-top:14px">
+  <div class="card"><h3 class="neon-y">Productividad del proceso</h3>
+   $$Productividad=\frac{Salidas}{Entradas}=\frac{Resultados}{Recursos}=\frac{Productos}{Insumos}$$</div>
+  <div class="card"><h3 class="neon-g">Valor</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li><b>Crear valor</b> = Eficiencia</li><li><b>Entregar valor</b> = Eficacia</li><li><b>Captar valor</b> = Efectividad</li></ul></div>
+ </div>
+</section>
+
+<section class="slide" id="s6"><span class="kicker">Administración de procesos</span><h2 class="sec">🧭 Estrategia del proceso</h2>
+ <div class="card" style="margin-bottom:14px"><p style="font-size:14.5px;line-height:1.6">Es el <b class="neon-c">enfoque</b> adoptado por la organización para transformar recursos en bienes y servicios. Su objetivo: producir bienes/servicios que cumplan los <b>requerimientos del cliente</b> y especificaciones en <b>costos</b> y demás restricciones.</p>
+ <p style="font-size:13.5px;margin-top:8px;color:#bfe9f5"><b>Estrategia de procesos</b> = el <b>patrón de decisiones</b> en la gestión de procesos para alcanzar las <b>prioridades competitivas</b>.</p></div>
+ <div class="note">🔗 Todo proceso de la cadena debe diseñarse para realizar sus prioridades competitivas y <b>agregar valor</b>.</div>
+</section>
+
+<section class="slide" id="s7"><span class="kicker">Comparador</span><h2 class="sec">🆚 Bienes físicos vs. Servicios</h2>
+ <div class="btnrow">
+  <button class="btn sm active-opt" id="bsB0" onclick="showBS(0)">BIENES</button>
+  <button class="btn sm mg" id="bsB1" onclick="showBS(1)">SERVICIOS</button>
+  <button class="btn sm yl" id="bsB2" onclick="showBS(2)">SEMEJANZA</button>
+ </div>
+ <div id="bsPanel"></div>
+</section>
+
+<section class="slide" id="s8"><span class="kicker">Clasificación (Barndt & Carvey)</span><h2 class="sec">🏢 Empresas según sus operaciones</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">+ Activos · Bienes físicos</h3><div style="margin-top:8px"><span class="tag">Manufactura (construcción, fabricación, ensamblaje)</span><span class="tag">Conversión (extracción, transformación, reducción)</span><span class="tag">Reparaciones (reconstrucción, renovación)</span></div></div>
+  <div class="card"><h3 class="neon-m">− Activos · Servicios</h3><div style="margin-top:8px"><span class="tag">Logística (almacenamiento, transporte)</span><span class="tag">Seguridad (protección, defensa, orden)</span><span class="tag">Bienestar (salud, educación, asesoría)</span></div></div>
+ </div>
+ <div class="card flash" style="margin-top:14px"><b class="neon-y">🤔 Una universidad y una refinería, ¿qué clase de operación son?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Universidad = <b>servicio (bienestar)</b>, cambia el estado de las personas; refinería = <b>bien físico (conversión)</b>, cambia el estado de los materiales.</div></div>
+</section>
+
+<section class="slide" id="s9"><span class="kicker">Decisiones de proceso</span><h2 class="sec">🧭 Diseño de un proceso eficaz</h2>
+ <p class="sub">Pulsa cada decisión:</p>
+ <div class="btnrow" id="decBtns"></div>
+ <div class="card" id="decInfo" style="min-height:90px"><b class="neon-y">Selecciona una decisión</b>.</div>
+</section>
+
+<section class="slide" id="s10"><span class="kicker">Procesos de servicios</span><h2 class="sec">🛎 Matriz de contacto con el cliente</h2>
+ <div class="btnrow">
+  <button class="btn sm active-opt" id="ctB0" onclick="showCT(0)">MOSTRADOR</button>
+  <button class="btn sm mg" id="ctB1" onclick="showCT(1)">OFICINA HÍBRIDA</button>
+  <button class="btn sm gr" id="ctB2" onclick="showCT(2)">TRASTIENDA</button>
+ </div>
+ <div id="ctPanel"></div>
+ <div class="note">📉 Menos contacto y personalización ⇒ menos complejidad, menos divergencia y más flujo en línea.</div>
+</section>
+
+<section class="slide" id="s11"><span class="kicker">Procesos de manufactura</span><h2 class="sec">🏭 Matriz producto‑proceso</h2>
+ <div class="grid g4">
+  <div class="card center"><b class="neon-c">1 · Taller</b><p style="font-size:12px;margin-top:6px;color:#bfe9f5">Bajo volumen, bajo pedido. MTO‑Pull.</p></div>
+  <div class="card center"><b class="neon-y">2 · Lotes grandes</b><p style="font-size:12px;margin-top:6px;color:#bfe9f5">Volumen bajo‑moderado. ATO.</p></div>
+  <div class="card center"><b class="neon-m">3 · Línea de ensamble</b><p style="font-size:12px;margin-top:6px;color:#bfe9f5">Pocos productos, volumen alto. MTS‑Push.</p></div>
+  <div class="card center"><b class="neon-g">4 · Flujo continuo</b><p style="font-size:12px;margin-top:6px;color:#bfe9f5">Alto volumen, alta estandarización.</p></div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3 class="neon-y">Estrategias de producción e inventario</h3><div style="margin-top:8px"><span class="tag">MTO · Fabricación por pedido</span><span class="tag">ATO · Ensamble por pedido</span><span class="tag">MTS · Fabricación para inventario</span></div></div>
+</section>
+
+<section class="slide" id="s12"><span class="kicker">4 estrategias de proceso</span><h2 class="sec">🧠 Enfoques</h2>
+ <p class="sub">Pulsa cada enfoque:</p>
+ <div class="btnrow" id="enfBtns"></div>
+ <div class="card" id="enfInfo" style="min-height:90px"><b class="neon-y">Selecciona un enfoque</b>.</div>
+</section>
+
+<section class="slide" id="s13"><span class="kicker">Chart.js · Costo‑volumen</span><h2 class="sec">📈 F1 (general) vs. F2 (especial)</h2>
+ <div class="grid g2">
+  <div class="card"><canvas id="chartCV" style="height:260px"></canvas></div>
+  <div class="card"><h3 class="neon-y">Lectura</h3><ul style="font-size:13.5px;line-height:2;padding-left:18px"><li><b>F1</b> propósito general: menor costo fijo, mayor variable.</li><li><b>F2</b> propósito especial: mayor fijo, menor variable.</li><li>La <b>cantidad de equilibrio</b> indica el volumen donde ambos cuestan igual.</li></ul></div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3 class="neon-c">5 herramientas de análisis y diseño</h3><div style="margin-top:8px"><span class="tag">Diagrama de flujo</span><span class="tag">Gráfica función tiempo</span><span class="tag">Gráfica flujo de valor (VSM)</span><span class="tag">Diagrama del proceso</span><span class="tag">Diseño preliminar del servicio</span></div></div>
+</section>
+
+<section class="slide" id="s14"><span class="kicker">Herramientas · detalle</span><h2 class="sec">🛠 ¿Qué aporta cada una?</h2>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-c">Gráfica función tiempo</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Diagrama de flujo con el <b>tiempo en el eje horizontal</b>; nodos = actividades, flechas = flujo; identifica y elimina desperdicios (pasos extra, duplicidades, demoras).</div></div>
+  <div class="card flash"><b class="neon-m">VSM (flujo de valor)</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Amplía la observación a los puntos donde <b>se agrega y no se agrega valor</b> en todo el proceso, <b>incluyendo la cadena de suministro</b> (hacia atrás hasta proveedores).</div></div>
+  <div class="card flash"><b class="neon-g">Diseño preliminar del servicio</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">3 niveles: 1) bajo control del cliente, 2) proveedor interactuando, 3) lejos del cliente (no visible). Señala <b>puntos de falla</b> y permite agregar <b>poka‑yoke</b>.</div></div>
+  <div class="card flash"><b class="neon-y">Diagrama del proceso</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Usa <b>símbolos, tiempo y distancia</b> para analizar y registrar objetivamente las actividades; enfoca las que <b>agregan valor</b>.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s15"><span class="kicker">Three.js · 3D</span><h2 class="sec">🧊 Sistema de transformación</h2>
+ <p class="sub">Entradas → proceso (valor) → salidas. Pulsa para enfocar:</p>
+ <div class="btnrow">
+  <button class="btn sm" onclick="focus3D(0)">Entradas</button>
+  <button class="btn sm mg" onclick="focus3D(1)">Transformación</button>
+  <button class="btn sm gr" onclick="focus3D(2)">Salidas</button>
+ </div>
+ <canvas id="threeCanvas" class="view" style="height:300px"></canvas>
+ <div class="card" id="threeDesc" style="margin-top:12px"><b class="neon-c">Escena 3D:</b> cubos de insumos → máquina (valor agregado) → producto/servicio.</div>
+</section>
+
+<section class="slide" id="s16"><span class="kicker">Repaso · respuestas ocultas</span><h2 class="sec">🎯 Tarjetas de repaso</h2>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-c">1.</b> ¿Qué es un proceso?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Conjunto de sub‑procesos/actividades lógicas que transforman entradas en salidas con recursos, hacia un objetivo común.</div></div>
+  <div class="card flash"><b class="neon-m">2.</b> ¿Qué mide la productividad del proceso?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">La relación salidas/entradas (resultados/recursos); es la medición de la gestión del proceso.</div></div>
+  <div class="card flash"><b class="neon-y">3.</b> ¿Qué es la divergencia?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Grado en que el proceso está altamente personalizado con considerable flexibilidad en cómo se realizan las tareas.</div></div>
+  <div class="card flash"><b class="neon-g">4.</b> ¿Qué es la reingeniería?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Un cambio <b>radical</b> en los procesos (vs. mejora continua incremental).</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s17"><span class="kicker">Síntesis</span><h2 class="sec">📈 Conclusiones</h2>
+ <div class="grid g3">
+  <div class="card"><b class="neon-c">Contacto</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">El grado de presencia/participación del cliente define el diseño del servicio.</p></div>
+  <div class="card"><b class="neon-m">Matriz producto‑proceso</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Facilita especificar la estrategia de producción e inventario (MTO/ATO/MTS).</p></div>
+  <div class="card"><b class="neon-g">Ajuste estratégico</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Se logra con patrones de decisión para servicios y manufactura; la cultura condiciona la mejora continua.</p></div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3 class="neon-y">📚 Referencias</h3><p style="font-size:13px;line-height:1.9;color:#bfe9f5">Krajewski, Ritzman & Malhotra (2013) · Heizer & Render (2019).</p></div>
+</section>
+
+<section class="slide" id="s18"><div style="min-height:80%;display:flex;flex-direction:column;justify-content:center">
+ <span class="kicker">Cierre</span><h2 class="sec">🏁 Ideas fuerza</h2>
+ <div class="grid g4" style="margin:16px 0">
+  <div class="card"><b class="neon-c">Proceso</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Transformación que agrega valor.</p></div>
+  <div class="card"><b class="neon-m">Estrategia</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Patrón de decisiones para prioridades competitivas.</p></div>
+  <div class="card"><b class="neon-g">Bienes vs. servicios</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Tangibilidad, almacenamiento y control de calidad distintos.</p></div>
+  <div class="card"><b class="neon-y">Herramientas</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Flujo, tiempo, VSM, proceso y diseño preliminar.</p></div>
+ </div>
+ <div class="aviso" style="margin-top:26px">📢 ESTÉN ATENTOS AL INICIO DE LA EVALUACIÓN EN CLASE</div>
+ <p class="center" style="margin-top:16px;font-size:20px;font-weight:900;background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent">¡MUCHAS GRACIAS! ⚙✨</p>
+</div></section>
+</div>
+
+<footer>
+ <button class="btn sm" onclick="goTo(current-1)">◀ Anterior</button>
+ <input type="range" id="slideSlider" min="0" max="18" value="0" oninput="goTo(+this.value)">
+ <button class="btn sm" onclick="goTo(current+1)">Siguiente ▶</button>
+ <span id="slideCounter">1 / 19</span>
+</footer>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];let current=0;
+const slider=document.getElementById('slideSlider');slider.max=slides.length-1;
+function goTo(i){if(i<0||i>=slides.length)return;slides[current].classList.remove('active');current=i;slides[current].classList.add('active');slides[current].scrollTop=0;slider.value=i;document.getElementById('slideCounter').textContent=(i+1)+' / '+slides.length;document.getElementById('progress').style.width=(i/(slides.length-1)*100)+'%';onSlideEnter(i);}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;if(e.key==='ArrowRight')goTo(current+1);if(e.key==='ArrowLeft')goTo(current-1);});
+function makeBtns(id,infoId,data){const c=document.getElementById(id);data.forEach((d,i)=>{const b=document.createElement('button');b.className='btn sm'+(i%2?' mg':'');b.textContent=d[0];b.onclick=()=>{c.querySelectorAll('.btn').forEach(x=>x.classList.remove('active-opt'));b.classList.add('active-opt');document.getElementById(infoId).innerHTML='<b class="neon-c">'+d[0]+'</b><p style="margin-top:6px;font-size:14px;color:#d9f3fb">'+d[1]+'</p>';};c.appendChild(b);});}
+makeBtns('nivBtns','nivInfo',[['Nivel 1 · Macroproceso','Áreas funcionales (Almacén, Ventas, Operaciones, etc.).'],['Nivel 2 · Proceso','Conjunto de sub‑procesos orientados a un objetivo común.'],['Nivel 3 · Subproceso','Actividades relacionadas lógicamente que transforman entradas en salidas.']]);
+makeBtns('decBtns','decInfo',[['Estructura del proceso','Posición de contacto con clientes (servicios) y de procesos/productos (manufactura).'],['Flexibilidad de recursos','Facilidad de empleados y equipos para manejar variedad, niveles y tareas.'],['Participación del cliente','Grado en que el cliente forma parte del proceso (baja/alta).'],['Intensidad del capital','Mezcla de equipo y habilidades humanas; baja/alta automatización.']]);
+makeBtns('enfBtns','enfInfo',[['1 · Enfoque en el proceso','Bajo volumen y alta variedad; máquinas de propósito general; alta flexibilidad (taller: soldar, pulir, pintar).'],['2 · Enfoque repetitivo','Orientado al producto usando módulos; línea de ensamble clásica; ej. comida rápida (hamburguesa con queso).'],['3 · Enfoque en el producto','Alto volumen y poca variedad; procesos continuos (vidrio, papel, focos, cerveza, tornillos); altos fijos, bajos variables.'],['4 · Personalización masiva','Variedad de bajo volumen al costo de alto volumen; requiere capacidades sofisticadas y vínculo ventas‑diseño‑producción‑cadena.']]);
+/* Bienes vs servicios */
+const bss=['<div class="card"><h3 class="neon-c">BIENES FÍSICOS</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Tangible; valor por propiedades físicas.</li><li>Almacenable y transportable; estandarizado.</li><li>Calidad fácil de controlar; depende de materiales.</li><li>Se produce para el cliente en ambiente industrial.</li></ul></div>','<div class="card"><h3 class="neon-m">SERVICIOS</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Intangible; valor percibido en el proceso.</li><li>No almacenable ni transportable.</li><li>Calidad difícil de controlar; depende de las personas.</li><li>Se produce para y con el cliente en el mercado.</li></ul></div>','<div class="card"><h3 class="neon-y">SEMEJANZA</h3><p style="font-size:14px;line-height:1.8">En ambos el cliente espera un <b>buen producto</b> y un <b>buen servicio</b> (post‑venta / atención); ambos requieren procesos que agreguen valor.</p></div>'];
+function showBS(i){[0,1,2].forEach(j=>document.getElementById('bsB'+j).classList.toggle('active-opt',j===i));document.getElementById('bsPanel').innerHTML=bss[i];}
+showBS(0);
+/* Contacto */
+const cts=['<div class="card"><h3 class="neon-c">MOSTRADOR (alto contacto)</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Mucha interacción y personalización.</li><li>Cliente participa y afecta el proceso.</li><li>Alta divergencia y poder de decisión del cliente.</li></ul></div>','<div class="card"><h3 class="neon-m">OFICINA HÍBRIDA</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Contacto moderado; servicios estándar con opciones.</li><li>Flujo entre estaciones con “rutas dominantes”.</li><li>Cierta personalización.</li></ul></div>','<div class="card"><h3 class="neon-g">TRASTIENDA (bajo contacto)</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Poca interacción y personalización.</li><li>Trabajo estandarizado y rutinario.</li><li>Flujos en línea hasta completar el servicio.</li></ul></div>'];
+function showCT(i){[0,1,2].forEach(j=>document.getElementById('ctB'+j).classList.toggle('active-opt',j===i));document.getElementById('ctPanel').innerHTML=cts[i];}
+showCT(0);
+/* Canvas transformación */
+const trSteps=['Paso 0 — Mueve el deslizador.','1 — ENTRADAS: insumos (materiales directos, personas).','2 — RECURSOS: planta (activos), trabajo (MO), tecnología y know‑how.','3 — TRANSFORMACIÓN: proceso que agrega valor.','4 — SALIDAS: productos (bien físico / servicio).','5 — RETROALIMENTACIÓN Y CONTROL: cierra el ciclo.'];
+function drawTr(s){const cv=document.getElementById('trCanvas');const dpr=window.devicePixelRatio||1;const W=cv.clientWidth,H=240;cv.width=W*dpr;cv.height=H*dpr;const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);
+ const y=H/2;const bw=Math.min(180,(W-80)/3);
+ const box=(cx,t,col)=>{x.save();x.shadowColor=col;x.shadowBlur=14;x.strokeStyle=col;x.lineWidth=2.5;x.fillStyle='rgba(8,10,16,.9)';x.beginPath();x.roundRect(cx-bw/2,y-34,bw,68,10);x.fill();x.stroke();x.restore();x.fillStyle='#eaf6ff';x.font='bold 12px Segoe UI';x.textAlign='center';x.fillText(t,cx,y+4);};
+ const arr=(x1,x2)=>{x.strokeStyle='#ffe600';x.lineWidth=2.5;x.beginPath();x.moveTo(x1,y);x.lineTo(x2-8,y);x.stroke();x.fillStyle='#ffe600';x.beginPath();x.moveTo(x2,y);x.lineTo(x2-9,y-5);x.lineTo(x2-9,y+5);x.closePath();x.fill();};
+ const c1=W*0.18,c2=W*0.5,c3=W*0.82;
+ if(s>=1)box(c1,'ENTRADAS','#00f0ff');
+ if(s>=2)box(c2,'RECURSOS','#a855f7');
+ if(s>=3){arr(c1+bw/2,c2-bw/2);box(c2,'TRANSFORMACIÓN','#ff2ec4');}
+ if(s>=4){arr(c2+bw/2,c3-bw/2);box(c3,'SALIDAS','#39ff14');}
+ if(s>=5){x.strokeStyle='rgba(57,255,20,.6)';x.setLineDash([6,5]);x.beginPath();x.moveTo(c3,y+34);x.quadraticCurveTo(W/2,H-6,c1,y+34);x.stroke();x.setLineDash([]);}
+ document.getElementById('trLabel').innerHTML='<b class="neon-c">▶</b> '+trSteps[s];}
+/* Chart costo-volumen */
+let cCV=null;
+function initChartCV(){if(!window.Chart||cCV)return;const vols=[0,200,400,600,800,1000];const f1=vols.map(q=>100+0.8*q);const f2=vols.map(q=>300+0.3*q);
+ cCV=new Chart(document.getElementById('chartCV'),{type:'line',data:{labels:vols,datasets:[{label:'F1 propósito general',data:f1,borderColor:'#00f0ff',backgroundColor:'rgba(0,240,255,.15)',borderWidth:2,pointRadius:2},{label:'F2 propósito especial',data:f2,borderColor:'#ff2ec4',backgroundColor:'rgba(255,46,196,.15)',borderWidth:2,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#d9f3fb'}}},scales:{x:{title:{display:true,text:'Unidades/año (Q)',color:'#9fd8e8'},ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.06)'}},y:{title:{display:true,text:'Costo total ($)',color:'#9fd8e8'},ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.08)'}}}}});}
+/* Three.js */
+let threeReady=false,threeFocus=-1,threeMeshes=[],threeGroup=null,threeRenderer,threeScene,threeCam;
+const defs3=[{col:0x00f0ff,d:'<b class="neon-c">ENTRADAS:</b> insumos (materiales directos, personas).'},
+ {col:0xff2ec4,d:'<b class="neon-m">TRANSFORMACIÓN:</b> proceso que agrega valor (planta, trabajo, tecnología, know‑how).'},
+ {col:0x39ff14,d:'<b class="neon-g">SALIDAS:</b> productos (bien físico) o servicios (personas).'}];
+function initThree(){if(threeReady)return;if(!window.THREE)return;
+ try{const cv=document.getElementById('threeCanvas');const r=cv.getBoundingClientRect();const w=r.width||800,h=r.height||300;
+ threeRenderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});threeRenderer.setClearColor(0x000000,0);threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));threeRenderer.setSize(w,h,false);
+ threeScene=new THREE.Scene();threeCam=new THREE.PerspectiveCamera(50,w/h,.1,100);threeCam.position.set(0,1.5,8);threeCam.lookAt(0,0,0);
+ threeScene.add(new THREE.AmbientLight(0xffffff,.85));const p1=new THREE.PointLight(0x66ccff,1.2,80);p1.position.set(8,8,8);threeScene.add(p1);
+ const grid=new THREE.GridHelper(16,16,0x1b6fb0,0x0e3a66);grid.position.y=-1.6;threeScene.add(grid);
+ threeGroup=new THREE.Group();threeScene.add(threeGroup);
+ const geos=[new THREE.BoxGeometry(1.2,1.2,1.2),new THREE.BoxGeometry(1.8,1.4,1.4),new THREE.SphereGeometry(.8,32,32)];
+ geos.forEach((g,i)=>{const m=new THREE.Mesh(g,new THREE.MeshPhongMaterial({color:defs3[i].col,emissive:defs3[i].col,emissiveIntensity:.35,shininess:90}));m.position.set((i-1)*3,0,0);threeGroup.add(m);threeMeshes.push(m);});
+ let drag=false,px=0,py=0;
+ cv.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;});
+ cv.addEventListener('pointermove',e=>{if(!drag)return;threeGroup.rotation.y+=(e.clientX-px)*.008;threeGroup.rotation.x=Math.max(-1,Math.min(1,threeGroup.rotation.x+(e.clientY-py)*.004));px=e.clientX;py=e.clientY;});
+ ['pointerup','pointerleave'].forEach(ev=>cv.addEventListener(ev,()=>drag=false));
+ (function anim(t){requestAnimationFrame(anim);if(!drag)threeGroup.rotation.y+=.0035;
+  threeMeshes.forEach((m,i)=>{m.position.y=Math.sin((t||0)*.0012+i*1.3)*.2;if(i===1)m.rotation.y+=.01;const tg=(threeFocus===i)?1.4:((threeFocus===-1)?1:.8);m.scale.lerp(new THREE.Vector3(tg,tg,tg),.08);m.material.emissiveIntensity+=(((threeFocus===i)?.75:.35)-m.material.emissiveIntensity)*.08;});
+  threeRenderer.render(threeScene,threeCam);})();
+ threeReady=true;}catch(e){}}
+function focus3D(i){threeFocus=(threeFocus===i)?-1:i;document.getElementById('threeDesc').innerHTML=threeFocus===-1?'<b class="neon-c">Escena 3D:</b> cubos de insumos → máquina (valor agregado) → producto/servicio.':defs3[i].d;}
+function onSlideEnter(i){const id=slides[i].id;
+ if(id==='s5')drawTr(+document.getElementById('trSlider').value);
+ if(id==='s13')setTimeout(initChartCV,120);
+ if(id==='s15')setTimeout(initThree,120);}
+addEventListener('resize',()=>{const id=slides[current].id;if(id==='s5')drawTr(+document.getElementById('trSlider').value);if(id==='s15'&&threeRenderer){const r=document.getElementById('threeCanvas').getBoundingClientRect();threeRenderer.setSize(r.width,r.height,false);threeCam.aspect=r.width/r.height;threeCam.updateProjectionMatrix();}});
+goTo(0);
+</script>
+</body>
+</html>

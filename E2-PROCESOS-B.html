@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación Sesión 2 — PCO · Procesos (Forma B)</title>
+<style>
+:root{--bg:#04040a;--cyan:#00f0ff;--magenta:#ff2ec4;--yellow:#ffe600;--green:#39ff14;--orange:#ff9500;--usil:#0b5cab;--card:rgba(255,255,255,.05);--border:rgba(0,240,255,.25)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#eaf6ff;font-family:'Segoe UI',system-ui,Arial,sans-serif;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(1100px 600px at 82% -10%,rgba(0,240,255,.13),transparent 60%),radial-gradient(900px 520px at 8% 110%,rgba(255,46,196,.11),transparent 60%)}
+header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:10px 18px;background:rgba(5,6,16,.95);border-bottom:1px solid var(--border)}
+#logoWrap{background:#fff;border-radius:10px;padding:3px 10px}#logoWrap img{height:42px;display:block}
+.brand{font-weight:800;font-size:15px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip{padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--cyan);font-size:12px;font-weight:600}
+.chip.doc{border-color:rgba(255,46,196,.45);color:var(--magenta)}
+main{position:relative;z-index:10;max-width:900px;margin:30px auto 60px;padding:0 20px}
+h2.sec{font-size:30px;font-weight:900;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.btn{cursor:pointer;border:1px solid var(--cyan);color:var(--cyan);background:rgba(0,240,255,.07);padding:10px 22px;border-radius:10px;font-size:15px;font-weight:700;text-transform:uppercase;transition:.25s}
+.btn:hover{background:rgba(0,240,255,.2);box-shadow:0 0 18px rgba(0,240,255,.5)}
+.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.btn.mg{border-color:var(--magenta);color:var(--magenta);background:rgba(255,46,196,.07)}.btn.gr{border-color:var(--green);color:var(--green);background:rgba(57,255,20,.07)}.btn.yl{border-color:var(--yellow);color:var(--yellow);background:rgba(255,230,0,.07)}
+.btn.sm{padding:6px 14px;font-size:12.5px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+input.txt{padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.5);color:#fff;font-size:15px;outline:none;width:100%}
+input.txt:focus{border-color:var(--cyan)}
+#timerDisplay{font-size:40px;font-weight:900;color:var(--green);font-variant-numeric:tabular-nums}
+#timerDisplay.warn{color:var(--orange)}#timerDisplay.danger{color:#ff3355;animation:pulse .7s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.qbox{border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:14px 16px;margin-bottom:12px;background:rgba(255,255,255,.03)}
+.qbox .qt{font-weight:700;margin-bottom:10px;font-size:14.5px}
+.qopt{display:block;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;color:#cfeef8;border:1px solid transparent;margin-bottom:4px}
+.qopt:hover{background:rgba(0,240,255,.08);border-color:rgba(0,240,255,.3)}
+.qopt input{margin-right:8px;accent-color:var(--cyan)}
+.neon-g{color:var(--green)}.neon-m{color:var(--magenta)}.neon-y{color:var(--yellow)}.neon-c{color:var(--cyan)}
+</style>
+</head>
+<body>
+<header>
+ <div id="logoWrap"><img src="USIL_logo.png" alt="USIL" onerror="this.onerror=null;this.style.display='none';document.getElementById('logoFallback').style.display='block';">
+  <svg id="logoFallback" viewBox="0 0 250 90" height="42" style="display:none"><text x="2" y="64" font-size="54" font-weight="700" fill="none" stroke="#c9a24b" stroke-width="2.5" font-family="Georgia,serif">30</text><circle cx="88" cy="36" r="24" fill="none" stroke="#c9a24b" stroke-width="3"/><text x="88" y="42" font-size="14" fill="#c9a24b" text-anchor="middle" font-family="Georgia,serif">años</text><text x="118" y="68" font-size="56" font-weight="800" fill="#0b5cab" font-family="Georgia,serif" font-style="italic">USIL</text></svg></div>
+ <div class="brand">⚙ EVALUACIÓN · PCO · PROCESOS · FORMA B</div>
+ <div style="margin-left:auto;display:flex;gap:8px"><span class="chip">Planeamiento y Control de Operaciones</span><span class="chip">1 intento · 10 min</span><span class="chip doc">Eduardo Olivos</span></div>
+</header>
+<main>
+ <h2 class="sec">📝 Evaluación Sesión 2 (Procesos) · Forma B</h2>
+ <div id="quizIntro" class="card">
+  <label style="font-size:13px;color:#8fb8c6;letter-spacing:1px;font-weight:700">APELLIDOS Y NOMBRES (en este orden)</label>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:8px 0 12px">
+   <input class="txt" id="apPaterno" placeholder="1er Apellido (paterno)" maxlength="40">
+   <input class="txt" id="apMaterno" placeholder="2do Apellido (materno)" maxlength="40">
+   <input class="txt" id="nombres" placeholder="Nombres" maxlength="60">
+  </div>
+  <p id="attemptInfo" style="font-size:13.5px;margin-bottom:10px"></p>
+  <ul style="font-size:13.5px;line-height:2;padding-left:18px;color:#cfeef8">
+   <li>📖 Las preguntas piden <b>interpretar</b>; repasa <b class="neon-c">PCO_S2_Teoria.html</b>.</li>
+   <li>🕑 Tiempo límite: <b class="neon-y">10 minutos (10:00)</b>.</li>
+   <li>🔒 Solo <b class="neon-c">1 intento por alumno</b>.</li>
+   <li>🚫 Si cambias de pantalla, minimizas o sales, se da por <b class="neon-m">concluida</b> y queda registrada.</li>
+   <li>📊 Tu resultado se registra automáticamente en la hoja del curso.</li>
+   <li>📩 Al final podrás recibir en tu correo personal el <b>Feedback</b> con tu calificación, cada pregunta, tu respuesta y la correcta.</li>
+  </ul>
+  <div class="btnrow"><button class="btn mg" id="btnStartQuiz" onclick="startQuiz()">🚀 Iniciar</button></div>
+  <div id="quizMsg" style="color:#ff8899;font-size:13.5px;font-weight:700"></div>
+ </div>
+ <div id="quizArea" style="display:none">
+  <div class="card" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap"><div id="timerDisplay">10:00</div><div><b class="neon-c" id="quizStudent"></b><br><span style="font-size:12px;color:#8fb8c6" id="quizAttemptLbl"></span></div></div>
+  <div id="questionsBox"></div>
+  <div class="btnrow"><button class="btn gr" onclick="submitQuiz(false)">✔ Entregar</button></div>
+ </div>
+ <div id="quizResult" style="display:none"></div>
+</main>
+<script>
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw92gRxVDJ-gunQgDs-xre1RjUFhcyRP0Y2VR3qJEe05qjwb0jffwNWuUU4EKXk-wZo/exec';
+const MAX_ATTEMPTS=1, TIEMPO_LIMITE=600, CURSO_TAG='Planeamiento y Control de Operaciones', SESION_TAG='S2 - Procesos (Forma B)';
+const KEY_BASE='pco_s2b_v1';
+const QUESTIONS=[
+ {q:'En un servicio de hotelería, el elemento de entrada (insumo directo) que se transforma en el proceso es:',o:['Materia prima','Maquinaria','Personas','Materiales indirectos'],c:2},
+ {q:'Si un proceso duplica su beneficio manteniendo constante su costo, la productividad (beneficio/costo):',o:['Se duplica, reflejando mejor gestión','Se reduce a la mitad','No cambia','Disminuye la eficiencia'],c:0},
+ {q:'Una refinería que cambia materiales de un estado no utilizable a uno usable (extracción/transformación) es, según Barndt y Carvey:',o:['Manufactura','Conversión','Reparaciones','Logística'],c:1},
+ {q:'Un banco que busca alta personalización y alta participación del cliente en su servicio VIP debe diseñarlo, según la matriz de contacto, como:',o:['Trastienda con flujos en línea','Oficina híbrida sin interacción','Trastienda con trabajo rutinario','Mostrador, con alta divergencia y alto poder de decisión del cliente'],c:3},
+ {q:'Una cervecera que produce el mismo producto día tras día en corridas grandes con equipos de propósito especial corresponde a:',o:['Taller, MTO','Línea de ensamble, ATO','Flujo continuo, MTS‑Push','Lotes grandes, MTO'],c:2},
+ {q:'La personalización masiva se interpreta como:',o:['La variedad del bajo volumen al costo del alto volumen, exigiendo capacidades sofisticadas y vínculo ventas‑diseño‑producción‑cadena','Producir un único producto sin variedad','Eliminar el contacto con el cliente','Aumentar el costo para personalizar'],c:0},
+ {q:'F1 (propósito general) tiene costo fijo $100/año y variable $0.80/unidad; F2 (propósito especial) tiene costo fijo $300/año y variable $0.30/unidad; la cantidad de equilibrio es Q=400. Si la demanda proyectada es 200 unidades/año, conviene:',o:['F2, porque su costo variable es menor','F1, porque por debajo del equilibrio (400) su menor costo fijo hace menor el costo total','F2, porque es más moderna','Indiferente; ambos cuestan igual a 200 unidades'],c:1},
+ {q:'La gráfica de función tiempo (mapa de proceso) permite:',o:['Analizar el movimiento de materiales sin tiempo','Ampliar el análisis hasta los proveedores','Diseñar el servicio en tres niveles','Identificar y eliminar desperdicios (pasos extra, duplicidades, demoras) con el tiempo en el eje horizontal'],c:3},
+ {q:'En el diseño preliminar del servicio, la “selección y capacitación del personal” se enfoca en:',o:['Nivel 1 (control del cliente)','Nivel 3 (no visible)','Nivel 2 (proveedor interactuando con el cliente)','La cantidad de equilibrio'],c:2},
+ {q:'“La cultura organizacional condiciona la mejora continua de los procesos” significa que:',o:['La mejora continua se logra solo con inversión en tecnología, sin importar la cultura','Aunque los cambios sean técnicamente correctos, no se sostienen si la cultura no los respalda','La cultura organizacional condiciona únicamente el clima laboral, no los procesos','La mejora continua exige cambiar primero la cultura y luego los procesos, en un orden estricto'],c:1}];
+let quizActive=false,timeLeft=TIEMPO_LIMITE,timerInt=null,lastAttemptNo=0,motivoFin='',lastRev=[],lastScore=0,lastPct=0;
+function fullName(){const p=(document.getElementById('apPaterno').value||'').trim();const m=(document.getElementById('apMaterno').value||'').trim();const n=(document.getElementById('nombres').value||'').trim();const ap=(p+' '+m).trim();return ap+(n?', '+n:'');}
+function validaNombre(){const p=(document.getElementById('apPaterno').value||'').trim();const n=(document.getElementById('nombres').value||'').trim();return p.length>=2&&n.length>=2;}
+function normName(){return fullName().toLowerCase().replace(/[^a-z0-9ñ]+/gi,'_');}
+function getAtt(key){try{const v=parseInt(localStorage.getItem(KEY_BASE+'_att_'+key)||'0',10);return isNaN(v)?0:v}catch(e){return 0}}
+function setAtt(key,v){try{localStorage.setItem(KEY_BASE+'_att_'+key,String(v))}catch(e){}}
+function getBest(){try{const v=parseInt(localStorage.getItem(KEY_BASE+'_best')||'0',10);return isNaN(v)?0:v}catch(e){return 0}}
+function setBest(v){try{localStorage.setItem(KEY_BASE+'_best',String(v))}catch(e){}}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function updateAttemptInfo(){
+ const btn=document.getElementById('btnStartQuiz');
+ if(!validaNombre()){document.getElementById('attemptInfo').innerHTML='🔢 El intento se controla por alumno: completa <b>1er apellido</b> y <b>nombres</b>.';btn.disabled=false;document.getElementById('quizMsg').textContent='';return;}
+ const used=getAtt(normName()),left=MAX_ATTEMPTS-used;
+ document.getElementById('attemptInfo').innerHTML='🔢 Intentos de <b>'+fullName()+'</b>: '+used+'/'+MAX_ATTEMPTS+' · Disponibles: <b class="neon-c">'+left+'</b>'+(getBest()>0?' · 🏆 Mejor nota del curso: <b class="neon-g">'+getBest()+'/10</b>':'');
+ if(left<=0){btn.disabled=true;document.getElementById('quizMsg').textContent='🔒 '+fullName()+' ya utilizó su único intento.';}
+ else{btn.disabled=false;document.getElementById('quizMsg').textContent='';}
+}
+['apPaterno','apMaterno','nombres'].forEach(id=>document.getElementById(id).addEventListener('input',updateAttemptInfo));
+updateAttemptInfo();
+function startQuiz(){
+ if(!validaNombre()){document.getElementById('quizMsg').textContent='⚠ Ingresa primero tu 1er apellido y tus nombres.';return;}
+ const key=normName();
+ if(getAtt(key)>=MAX_ATTEMPTS){document.getElementById('quizMsg').textContent='🔒 '+fullName()+' ya utilizó su único intento.';return;}
+ const name=fullName();
+ quizActive=true;timeLeft=TIEMPO_LIMITE;motivoFin='';if(timerInt)clearInterval(timerInt);
+ document.getElementById('quizIntro').style.display='none';document.getElementById('quizResult').style.display='none';document.getElementById('quizArea').style.display='block';
+ document.getElementById('quizStudent').textContent='Alumno(a): '+name;
+ document.getElementById('quizAttemptLbl').textContent='Intento único · No cambies de pantalla';
+ const box=document.getElementById('questionsBox');box.innerHTML='';
+ QUESTIONS.forEach((qq,i)=>{box.innerHTML+='<div class="qbox"><div class="qt">'+(i+1)+'. '+qq.q+'</div>'+qq.o.map((op,j)=>'<label class="qopt"><input type="radio" name="q'+i+'" value="'+j+'">'+String.fromCharCode(65+j)+') '+op+'</label>').join('')+'</div>';});
+ const td=document.getElementById('timerDisplay');td.textContent=fmt(TIEMPO_LIMITE);td.className='';
+ timerInt=setInterval(()=>{timeLeft--;td.textContent=fmt(timeLeft);td.className=timeLeft<=30?'danger':(timeLeft<=120?'warn':'');if(timeLeft<=0){clearInterval(timerInt);submitQuiz(true);}},1000);}
+function endBySwitch(){if(!quizActive)return;motivoFin='CAMBIO DE PANTALLA';submitQuiz(true);}
+document.addEventListener('visibilitychange',()=>{if(quizActive&&document.hidden)endBySwitch();});
+window.addEventListener('blur',()=>{if(quizActive)endBySwitch();});
+window.addEventListener('beforeunload',e=>{if(quizActive){e.preventDefault();e.returnValue='';}});
+function submitQuiz(auto){if(!quizActive)return;quizActive=false;clearInterval(timerInt);
+ let score=0;const rev=[];
+ QUESTIONS.forEach((qq,i)=>{const sel=document.querySelector('input[name="q'+i+'"]:checked');const v=sel?+sel.value:-1;const ok=v===qq.c;if(ok)score++;rev.push({i:i+1,q:qq.q,ok,sel:v>=0?qq.o[v]:'— Sin respuesta —',ans:qq.o[qq.c]});});
+ lastRev=rev;lastScore=score;lastPct=score*10;
+ const key=normName();lastAttemptNo=getAtt(key)+1;setAtt(key,lastAttemptNo);if(score>getBest())setBest(score);
+ const name=fullName();const pct=lastPct,aprobado=score>=6,used=TIEMPO_LIMITE-Math.max(timeLeft,0);const fecha=new Date().toLocaleString('es-PE');
+ const incidencia=motivoFin||(auto?'TIEMPO AGOTADO':'ENTREGA NORMAL');
+ const detalle=rev.map(r=>'P'+r.i+(r.ok?'OK':'ERROR')).join(' ')+(motivoFin?' | Incidencia: '+motivoFin:'');
+ const payload={_subject:'Evaluación '+SESION_TAG+' — '+name+(motivoFin?' 🚫':''),Curso:CURSO_TAG,Sesion:SESION_TAG,Alumno:name,Nota:score,Porcentaje:pct+'%',Estado:aprobado?'APROBADO':'DESAPROBADO',Intento:lastAttemptNo+' de '+MAX_ATTEMPTS,Tiempo_empleado:fmt(used)+' de 10:00',Fecha:fecha,Incidencia:incidencia,Detalle:detalle};
+ const st0=document.getElementById('sendStatus');
+ fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
+  .then(()=>{if(st0)st0.innerHTML='✅ <b>Resultado registrado</b> en la hoja “'+SESION_TAG+'”.';})
+  .catch(()=>{if(st0)st0.innerHTML='⚠ No se pudo registrar. Verifica tu conexión.';});
+ document.getElementById('quizArea').style.display='none';
+ let html='<div class="card"><h3 class="'+(aprobado?'neon-g':'neon-m')+'" style="font-size:24px">'+(aprobado?'✅':'❌')+' Finalizada'+(motivoFin?' 🚫 CONCLUIDA POR CAMBIO DE PANTALLA':(auto?' (tiempo agotado)':''))+'</h3>'+
+  '<p style="margin:8px 0"><b>Alumno(a):</b> '+name.replace(/</g,'&lt;')+'</p>'+
+  '<div style="display:flex;gap:20px;align-items:center;margin:14px 0"><div style="font-size:52px;font-weight:900;color:'+(aprobado?'var(--green)':'var(--magenta)')+'">'+score+' / 10</div><div><div style="font-size:18px;font-weight:800" class="'+(aprobado?'neon-g':'neon-m')+'">'+pct+'% — '+(aprobado?'APROBADO':'DESAPROBADO')+'</div><div style="font-size:12.5px;color:#8fb8c6">Incidencia: '+incidencia+'</div></div></div>'+
+  '<div id="sendStatus" style="font-size:13.5px;margin:6px 0">📨 Registrando…</div>'+
+  '<p style="font-size:13px;font-weight:700">🔒 Intento único consumido.</p>'+
+  '<div style="margin-top:16px;border-top:1px dashed rgba(255,255,255,.2);padding-top:14px">'+
+  '<h4 class="neon-y">📩 Recibe tu Feedback personal</h4>'+
+  '<p style="font-size:13px;margin:6px 0">Ingresa tu correo personal y te enviaremos tu <b>calificación</b> y cada pregunta con <b>tu respuesta</b> y la <b>correcta</b>.</p>'+
+  '<input class="txt" id="fbEmail" type="email" placeholder="tucorreo@ejemplo.com" style="max-width:420px">'+
+  '<div class="btnrow"><button class="btn yl" onclick="sendFeedback()">📩 Enviar Feedback a mi correo</button></div>'+
+  '<div id="fbStatus" style="font-size:13px"></div></div>'+
+  '<h4 class="neon-y" style="margin:12px 0 8px">🔎 Revisión</h4>';
+ rev.forEach(r=>{html+='<div style="border-left:4px solid '+(r.ok?'var(--green)':'#ff3355')+';background:rgba(255,255,255,.03);padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:8px;font-size:13px"><b>'+(r.ok?'✔':'✘')+' P'+r.i+'</b> '+r.q+'<br><span style="color:#8fb8c6">Tu respuesta: </span>'+r.sel+(r.ok?'':'<br><span style="color:var(--green)">Correcta: </span>'+r.ans)+'</div>';});
+ html+='</div>';
+ const res=document.getElementById('quizResult');res.innerHTML=html;res.style.display='block';updateAttemptInfo();}
+function sendFeedback(){
+ const em=(document.getElementById('fbEmail').value||'').trim();
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){document.getElementById('fbStatus').innerHTML='<span style="color:#ff8899">⚠ Ingresa un correo válido.</span>';return;}
+ const name=fullName();const aprobado=lastScore>=6;
+ let fb='FEEDBACK EVALUACIÓN — '+SESION_TAG+'\nAlumno(a): '+name+'\nNota: '+lastScore+'/10 ('+lastPct+'%) — '+(aprobado?'APROBADO':'DESAPROBADO')+'\n\n';
+ lastRev.forEach(r=>{
+   fb+=(r.ok?'✔':'✘')+' P'+r.i+' '+r.q+'\n';
+   fb+='Tu respuesta: '+r.sel+'\n';
+   fb+='Correcta: '+r.ans+'\n\n';
+ });
+ fb+='Saludos,\nEduardo Olivos';
+ fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({Tipo:'FEEDBACK',Correo_alumno:em,_subject:'Feedback Evaluación PCO Procesos (Forma B) — '+name,Feedback:fb,Curso:CURSO_TAG,Sesion:SESION_TAG,Alumno:name})})
+  .then(()=>{document.getElementById('fbStatus').innerHTML='<span style="color:var(--green)">✅ Feedback enviado a '+em+' (revisa también spam).</span>';})
+  .catch(()=>{document.getElementById('fbStatus').innerHTML='<span style="color:#ff8899">⚠ No se pudo enviar. Verifica tu conexión.</span>';});}
+</script>
+</body>
+</html>
