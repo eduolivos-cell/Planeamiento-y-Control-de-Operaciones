@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCO — Sesión 3: Calidad y Control Estadístico de Proceso (Teoría)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>if(!window.THREE){document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');}</script>
+<style>
+:root{--bg:#04040a;--cyan:#00f0ff;--magenta:#ff2ec4;--yellow:#ffe600;--green:#39ff14;--orange:#ff9500;--purple:#a855f7;--usil:#0b5cab;--card:rgba(255,255,255,.05);--border:rgba(0,240,255,.25)}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
+body{background:var(--bg);color:#eaf6ff;font-family:'Segoe UI',system-ui,Arial,sans-serif;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1100px 600px at 82% -10%,rgba(0,240,255,.13),transparent 60%),radial-gradient(900px 520px at 8% 110%,rgba(255,46,196,.11),transparent 60%),radial-gradient(700px 420px at 50% 55%,rgba(168,85,247,.08),transparent 60%);animation:hue 14s ease-in-out infinite alternate}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:radial-gradient(1.5px 1.5px at 25% 35%,rgba(0,240,255,.8) 50%,transparent 51%),radial-gradient(1.5px 1.5px at 75% 65%,rgba(255,46,196,.8) 50%,transparent 51%),radial-gradient(1.2px 1.2px at 50% 20%,rgba(255,230,0,.8) 50%,transparent 51%),radial-gradient(1.2px 1.2px at 12% 78%,rgba(57,255,20,.7) 50%,transparent 51%);background-size:340px 340px,420px 420px,260px 260px,380px 380px;animation:drift 90s linear infinite}
+@keyframes hue{to{filter:hue-rotate(40deg)}}@keyframes drift{to{background-position:340px 680px,-420px 840px,260px -520px,-380px 760px}}
+header{position:fixed;top:0;left:0;right:0;height:64px;z-index:50;display:flex;align-items:center;gap:14px;padding:0 18px;background:rgba(5,6,16,.93);border-bottom:1px solid var(--border)}
+#logoWrap{background:#fff;border-radius:10px;padding:3px 10px;display:flex;align-items:center;flex-shrink:0}#logoWrap img{height:42px;display:block}
+.brand{font-weight:800;font-size:15px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.head-info{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;font-size:12px}
+.chip{padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--cyan);background:rgba(0,240,255,.06);font-weight:600}
+.chip.doc{border-color:rgba(255,46,196,.45);color:var(--magenta);background:rgba(255,46,196,.07)}
+#progress{position:fixed;top:64px;left:0;height:3px;width:0;z-index:60;background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--yellow));box-shadow:0 0 14px var(--cyan);transition:width .45s}
+#stage{position:fixed;inset:64px 0 78px 0;z-index:10}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .55s;overflow-y:auto;padding:28px 5vw 60px}
+.slide.active{opacity:1;pointer-events:auto}
+h1.big{font-size:clamp(26px,4.4vw,54px);line-height:1.05;font-weight:900;background:linear-gradient(90deg,var(--cyan) 10%,var(--magenta) 55%,var(--yellow) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(0,240,255,.35))}
+h2.sec{font-size:clamp(22px,3.2vw,34px);font-weight:900;margin-bottom:6px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:#9fd8e8;font-size:15px;margin-bottom:18px;max-width:920px;line-height:1.5}
+.kicker{display:inline-block;font-size:12px;letter-spacing:3px;color:var(--yellow);border:1px solid rgba(255,230,0,.4);padding:5px 14px;border-radius:20px;margin-bottom:14px;background:rgba(255,230,0,.06);text-transform:uppercase;font-weight:700}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;backdrop-filter:blur(6px)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.neon-c{color:var(--cyan)}.neon-m{color:var(--magenta)}.neon-y{color:var(--yellow)}.neon-g{color:var(--green)}.neon-o{color:var(--orange)}.neon-p{color:var(--purple)}
+.tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:14px;margin:3px 4px 3px 0;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05)}
+.btn{cursor:pointer;border:1px solid var(--cyan);color:var(--cyan);background:rgba(0,240,255,.07);padding:10px 22px;border-radius:10px;font-size:15px;font-weight:700;text-transform:uppercase;transition:.25s;text-decoration:none;display:inline-block}
+.btn:hover{background:rgba(0,240,255,.2);box-shadow:0 0 18px rgba(0,240,255,.5);transform:translateY(-2px)}
+.btn.mg{border-color:var(--magenta);color:var(--magenta);background:rgba(255,46,196,.07)}.btn.yl{border-color:var(--yellow);color:var(--yellow);background:rgba(255,230,0,.07)}.btn.gr{border-color:var(--green);color:var(--green);background:rgba(57,255,20,.07)}
+.btn.sm{padding:6px 14px;font-size:12.5px}.btn.active-opt{background:rgba(0,240,255,.28);box-shadow:0 0 16px rgba(0,240,255,.55)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--cyan),var(--magenta));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--yellow);border:2px solid #000;box-shadow:0 0 12px var(--yellow);cursor:pointer}
+footer{position:fixed;bottom:0;left:0;right:0;height:78px;z-index:50;display:flex;align-items:center;gap:16px;padding:0 22px;background:rgba(5,6,16,.93);border-top:1px solid var(--border)}
+#slideSlider{flex:1}#slideCounter{font-size:13px;color:#9fd8e8;min-width:64px;text-align:center;font-weight:700}
+.stat{font-size:26px;font-weight:900}.stat-lbl{font-size:11.5px;letter-spacing:1.5px;color:#8fb8c6;text-transform:uppercase}
+.tl-item{cursor:pointer;transition:.25s}.tl-item:hover{transform:translateY(-3px);box-shadow:0 0 20px rgba(0,240,255,.25)}
+canvas.view{width:100%;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,10,.5)}
+.center{text-align:center}
+.note{border-left:4px solid var(--yellow);background:rgba(255,230,0,.06);padding:10px 14px;border-radius:0 10px 10px 0;font-size:13.5px;color:#f2ecc0;margin-top:12px}
+.katex{color:#fff}
+.flash .ans{display:none;margin-top:10px;border-left:3px solid var(--green);padding:8px 12px;background:rgba(57,255,20,.08);color:#c9ffd9;font-size:13.5px}
+.flash.open .ans{display:block}
+.aviso{border:2px dashed var(--magenta);background:rgba(255,46,196,.08);border-radius:14px;padding:18px;font-size:17px;font-weight:800;color:var(--magenta);text-align:center;box-shadow:0 0 24px rgba(255,46,196,.25)}
+</style>
+</head>
+<body>
+<header>
+ <div id="logoWrap"><img src="USIL_logo.png" alt="USIL 30 años" onerror="this.onerror=null;this.style.display='none';document.getElementById('logoFallback').style.display='block';">
+  <svg id="logoFallback" viewBox="0 0 250 90" height="42" style="display:none"><text x="2" y="64" font-size="54" font-weight="700" fill="none" stroke="#c9a24b" stroke-width="2.5" font-family="Georgia,serif">30</text><circle cx="88" cy="36" r="24" fill="none" stroke="#c9a24b" stroke-width="3"/><text x="88" y="42" font-size="14" fill="#c9a24b" text-anchor="middle" font-family="Georgia,serif">años</text><text x="118" y="68" font-size="56" font-weight="800" fill="#0b5cab" font-family="Georgia,serif" font-style="italic">USIL</text></svg></div>
+ <div class="brand">⚙ PLANEAMIENTO Y CONTROL DE OPERACIONES · TEORÍA</div>
+ <div class="head-info"><span class="chip">Sesión 3 · Calidad y CEP</span><span class="chip doc">👷 Eduardo Olivos</span></div>
+</header>
+<div id="progress"></div>
+<div id="stage">
+
+<section class="slide active" id="s0"><div style="min-height:82%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+ <span class="kicker">Sesión 03 · 2026-II</span>
+ <h1 class="big">CALIDAD Y CONTROL<br>ESTADÍSTICO DE PROCESO</h2></h1>
+ <p class="sub center" style="margin-top:14px">De la <b class="neon-c">calidad total (TQM)</b> a las <b class="neon-m">gráficas de control</b> y la <b class="neon-g">habilidad del proceso (Cp, Cpk)</b>.</p>
+ <div class="card"><b class="neon-y">Curso:</b> Planeamiento y Control de Operaciones | <b class="neon-y">Docente:</b> Eduardo Olivos</div>
+ <div class="btnrow" style="justify-content:center;margin-top:26px"><button class="btn" onclick="goTo(1)">▶ Iniciar la clase</button></div>
+</div></section>
+
+<section class="slide" id="s1"><span class="kicker">Hoja de ruta</span><h2 class="sec">🗺 Hoja de ruta de la sesión</h2>
+ <p class="sub">Haz clic en cada bloque:</p>
+ <div class="grid g4">
+  <div class="card tl-item" onclick="goTo(2)"><div class="stat neon-c">🎯</div><div class="stat-lbl">Objetivo y gatillo</div></div>
+  <div class="card tl-item" onclick="goTo(3)"><div class="stat neon-y">💎</div><div class="stat-lbl">¿Qué es calidad?</div></div>
+  <div class="card tl-item" onclick="goTo(5)"><div class="stat neon-m">💰</div><div class="stat-lbl">Costos de la calidad</div></div>
+  <div class="card tl-item" onclick="goTo(7)"><div class="stat neon-o">🌐</div><div class="stat-lbl">ISO y TQM</div></div>
+  <div class="card tl-item" onclick="goTo(9)"><div class="stat neon-g">📉</div><div class="stat-lbl">Control estadístico</div></div>
+  <div class="card tl-item" onclick="goTo(12)"><div class="stat neon-p">📊</div><div class="stat-lbl">Gráficas X̄, R, p, c</div></div>
+  <div class="card tl-item" onclick="goTo(15)"><div class="stat neon-c">🎯</div><div class="stat-lbl">Habilidad Cp / Cpk</div></div>
+  <div class="card tl-item" onclick="goTo(19)"><div class="stat neon-m">📢</div><div class="stat-lbl">Cierre</div></div>
+ </div>
+ <div class="note">💡 Presentación <b>interactiva</b>: pulsa botones, mueve deslizadores y responde las tarjetas.</div>
+</section>
+
+<section class="slide" id="s2"><span class="kicker">Momento 1 · Utilidad</span><h2 class="sec">🎯 Objetivos y pregunta gatillo</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Objetivos de la sesión</h3><ul style="font-size:14px;line-height:2;padding-left:18px"><li>Identificar el concepto de <b>calidad</b>.</li><li>Conocer las herramientas de la <b>calidad total</b>.</li><li>Usar el <b>control estadístico de procesos</b>.</li><li>Entender la <b>habilidad del proceso</b>.</li></ul></div>
+  <div class="card"><h3 class="neon-y">Pregunta gatillo</h3><p style="font-size:14px;line-height:1.6;margin-top:6px">¿Cómo se sabe que algo es de calidad? ¿Cómo sabe que un helado es bueno? ¿La calidad mejora la rentabilidad?</p>
+   <div class="note">🤔 Desde producción, calidad = cumplir estándares y <b>“hacerlo bien a la primera”</b>.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s3"><span class="kicker">Definición</span><h2 class="sec">💎 ¿Qué es la calidad?</h2>
+ <div class="card" style="margin-bottom:14px"><p style="font-size:15px;line-height:1.7"><b class="neon-c">ASQ:</b> “La totalidad de rasgos y características de un producto o servicio que respaldan su habilidad para <b>satisfacer necesidades establecidas o implícitas</b>.” El administrador de operaciones construye un sistema de <b>calidad total</b> que identifica y satisface necesidades del cliente.</p>
+ <p style="font-size:13.5px;margin-top:10px;color:#bfe9f5"><b>Visión de producción:</b> calidad = cumplir estándares y <b>hacerlo bien a la primera</b>; verla como variable precisa y medible (un buen helado tiene altos niveles de crema).</p></div>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-m">¿La calidad mejora la rentabilidad?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Sí: mejor reputación, menor responsabilidad por producto y productos que compiten globalmente protegen la rentabilidad y la balanza comercial.</div></div>
+  <div class="card flash"><b class="neon-y">¿Cuesta la mala calidad?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Sí: Ford‑Firestone muestra cómo fallas de calidad generan recalls, pérdida de imagen y costos enormes.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s4"><span class="kicker">Importancia</span><h2 class="sec">🌐 Importancia de la calidad</h2>
+ <p class="sub">Pulsa cada dimensión:</p>
+ <div class="btnrow" id="impBtns"></div>
+ <div class="card" id="impInfo" style="min-height:80px"><b class="neon-y">Selecciona una dimensión</b>.</div>
+</section>
+
+<section class="slide" id="s5"><span class="kicker">Costos de la calidad</span><h2 class="sec">💰 ¿En qué se gasta la calidad?</h2>
+ <p class="sub">Pulsa cada categoría:</p>
+ <div class="btnrow" id="cosBtns"></div>
+ <div class="card" id="cosInfo" style="min-height:80px"><b class="neon-y">Selecciona una categoría</b>.</div>
+</section>
+
+<section class="slide" id="s6"><span class="kicker">Estándares y TQM</span><h2 class="sec">🌐 ISO y Calidad Total</h2>
+ <div class="grid g3">
+  <div class="card flash"><b class="neon-c">ISO 9001</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Estándares de calidad: liderazgo, documentación detallada, instrucciones de trabajo y archivo de registros.</div></div>
+  <div class="card flash"><b class="neon-g">ISO 14001</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Administración <b>ambiental</b>: prevención de contaminación, cumplimiento regulatorio y ventaja competitiva.</div></div>
+  <div class="card flash"><b class="neon-m">TQM</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Énfasis en la calidad <b>desde el proveedor hasta el cliente</b>; compromiso de mejora continua en todos los aspectos.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s7"><span class="kicker">Herramientas TQM</span><h2 class="sec">🧰 Las 7 herramientas de la calidad</h2>
+ <p class="sub">Pulsa cada herramienta:</p>
+ <div class="btnrow" id="tqmBtns"></div>
+ <div class="card" id="tqmInfo" style="min-height:80px"><b class="neon-y">Selecciona una herramienta</b>.</div>
+</section>
+
+<section class="slide" id="s8"><span class="kicker">Control estadístico</span><h2 class="sec">📉 Shewhart y las causas de variación</h2>
+ <div class="card" style="margin-bottom:14px"><p style="font-size:14.5px;line-height:1.6">Técnica estadística para asegurar que los procesos cumplan estándares. <b class="neon-c">Walter Shewhart</b> (Bell Labs, 1920s) distinguió <b>causas comunes (naturales)</b> de <b class="neon-m">causas especiales (asignables)</b> y creó la <b>gráfica de control</b> para separarlas. Un proceso opera <b>bajo control estadístico</b> cuando su única fuente de variación son causas comunes.</p></div>
+ <div class="btnrow">
+  <button class="btn sm active-opt" id="varB0" onclick="showVar(0)">VARIACIÓN NATURAL</button>
+  <button class="btn sm mg" id="varB1" onclick="showVar(1)">VARIACIÓN ASIGNABLE</button>
+  <button class="btn sm yl" id="varB2" onclick="showVar(2)">ESTADOS DEL PROCESO</button>
+ </div>
+ <div id="varPanel"></div>
+</section>
+
+<section class="slide" id="s9"><span class="kicker">Muestras y TLC</span><h2 class="sec">🧮 Teorema del límite central</h2>
+ <div class="grid g2">
+  <div class="card"><p style="font-size:14px;line-height:1.7">Se usan <b>promedios de muestras pequeñas</b> (4–8 unidades) porque las piezas individuales son demasiado erráticas. La distribución de \(\bar{x}\) tiende a ser <b>normal</b>.</p>
+   $$\bar{\bar{x}}=\mu\qquad \sigma_{\bar{x}}=\frac{\sigma}{\sqrt{n}}$$</div>
+  <div class="card flash"><b class="neon-y">🤔 Si σ=2 y n=4, ¿cuánto es σ<sub>x̄</sub>?</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">\(\sigma_{\bar{x}}=2/\sqrt{4}=1\). Al aumentar n, la dispersión de las medias disminuye.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s10"><span class="kicker">Gráfica de variables X̄</span><h2 class="sec">📊 Límites de control (σ conocida)</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Fórmulas</h3>
+   $$LCS=\bar{\bar{x}}+z\,\sigma_{\bar{x}}\qquad LCI=\bar{\bar{x}}-z\,\sigma_{\bar{x}}$$
+   <p style="font-size:13px;margin-top:6px;color:#bfe9f5">z=2 para 95.45% · z=3 para 99.73%.</p></div>
+  <div class="card flash"><b class="neon-m">Ej. Clinton (gráfica R): R̄=5.3, n=5, D₄=2.115, D₃=0</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">LCS=2.115×5.3=<b>11.21</b> · LCI=0×5.3=<b>0</b>.</div></div>
+ </div>
+ <p class="sub" style="margin-top:14px">Mueve el deslizador para agregar muestras; las que salen de los límites se marcan en rojo (<b>fuera de control</b>):</p>
+ <input type="range" id="ccSlider" min="1" max="12" value="6" step="1" style="width:100%;max-width:700px" oninput="drawCC(+this.value)">
+ <div class="card" id="ccLabel" style="margin:10px 0;min-height:46px"></div>
+ <canvas id="ccCanvas" class="view" style="height:260px"></canvas>
+</section>
+
+<section class="slide" id="s11"><span class="kicker">Ejercicios X̄ y R</span><h2 class="sec">✍ Ejes y hojuelas de avena</h2>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-c">Ej. Ejes: x̿=0.56, R̄=0.006, n=6, A₂=0.483</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver límites</button><div class="ans">LCS=0.56+0.483(0.006)=<b>0.5629</b> · LCI=0.56−0.483(0.006)=<b>0.5571</b>.</div></div>
+  <div class="card flash"><b class="neon-m">Ej. Hojuelas de avena (99.73%)</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Se establecen LCS y LCI con z=3 para incluir el 99.73% de las medias muestrales.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s12"><span class="kicker">Control por atributos</span><h2 class="sec">🔢 Gráficas p y c</h2>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-c">Gráfica p</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Controla el <b>porcentaje de defectuosos</b> (bueno/malo, distribución binomial → normal con n grande).</div></div>
+  <div class="card flash"><b class="neon-m">Gráfica c</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Controla el <b>número de defectos</b> por unidad (ej. errores de captura de datos).</div></div>
+ </div>
+ <div class="note">📌 Las <b>variables</b> se miden por longitud/peso; los <b>atributos</b> se cuentan (defectuosos o defectos).</div>
+</section>
+
+<section class="slide" id="s13"><span class="kicker">Habilidad del proceso</span><h2 class="sec">🎯 Cp y Cpk</h2>
+ <div class="grid g2">
+  <div class="card"><h3 class="neon-c">Razón Cp</h3>
+   $$C_p=\frac{LES-LIE}{6\sigma}$$
+   <p style="font-size:13px;margin-top:6px;color:#bfe9f5">Cp=1 → 99.73% dentro (2.7 defectos/1000). Cp=1.33 → 64 ppm. Cp=2 → 3.4 ppm.</p></div>
+  <div class="card"><h3 class="neon-m">Índice Cpk</h3>
+   $$C_{pk}=\min\left[\frac{LES-\bar{X}}{3\sigma},\ \frac{\bar{X}-LIE}{3\sigma}\right]$$
+   <p style="font-size:13px;margin-top:6px;color:#bfe9f5">Mide el centrado respecto a la especificación más cercana. Cpk=1 → &lt;2,700 ppm; Cpk=2 → &lt;3.4 ppm.</p></div>
+ </div>
+</section>
+
+<section class="slide" id="s14"><span class="kicker">Ejercicios de habilidad</span><h2 class="sec">✍ Plantillas y ACME</h2>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-c">Plantillas: .250±.001, σ=0.0005, X̄=0.250</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Cpk=(0.251−0.250)/(3×0.0005)=<b>0.67</b> → <b>NO</b> reemplaza a la máquina existente (Cpk 1.0).</div></div>
+  <div class="card flash"><b class="neon-m">ACME: X̄=8.01, σ=0.03, LES=8.12, LIE=7.88</b><button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Cpk=min[(8.12−8.01)/0.09, (8.01−7.88)/0.09]=min[1.22,1.44]=<b>1.22</b>.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s15"><span class="kicker">Chart.js</span><h2 class="sec">📊 Defectos por millón vs Cp</h2>
+ <div class="grid g2">
+  <div class="card"><canvas id="chartCp" style="height:260px"></canvas></div>
+  <div class="card"><h3 class="neon-y">Lectura</h3><ul style="font-size:13.5px;line-height:2;padding-left:18px"><li>Muchas empresas eligen <b>Cp=1.33</b> (4 sigma) como meta.</li><li>Un proceso <b>bajo control</b> puede no ser <b>capaz</b> (no cumple especificaciones).</li><li>Cpk combina centrado y dispersión.</li></ul></div>
+ </div>
+</section>
+
+<section class="slide" id="s16"><span class="kicker">Three.js · 3D</span><h2 class="sec">🧊 Estados del proceso</h2>
+ <p class="sub">Pulsa para enfocar cada estado:</p>
+ <div class="btnrow">
+  <button class="btn sm gr" onclick="focus3D(0)">Bajo control y capaz</button>
+  <button class="btn sm yl" onclick="focus3D(1)">Bajo control, no capaz</button>
+  <button class="btn sm mg" onclick="focus3D(2)">Fuera de control</button>
+ </div>
+ <canvas id="threeCanvas" class="view" style="height:260px"></canvas>
+ <div class="card" id="threeDesc" style="margin-top:12px"><b class="neon-c">Escena 3D:</b> el proceso debe ponerse bajo control y luego demostrar habilidad.</div>
+</section>
+
+<section class="slide" id="s17"><span class="kicker">Repaso · respuestas ocultas</span><h2 class="sec">🎯 Tarjetas de repaso</h2>
+ <div class="grid g2">
+  <div class="card flash"><b class="neon-c">1.</b> ¿Qué es calidad según ASQ?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Totalidad de rasgos que respaldan satisfacer necesidades establecidas o implícitas.</div></div>
+  <div class="card flash"><b class="neon-m">2.</b> ¿Cuándo un proceso está bajo control estadístico?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Cuando su única fuente de variación son causas comunes (naturales).</div></div>
+  <div class="card flash"><b class="neon-y">3.</b> ¿Diferencia entre Cp y Cpk?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">Cp compara tolerancia con 6σ; Cpk además mide el centrado respecto a la especificación más cercana.</div></div>
+  <div class="card flash"><b class="neon-g">4.</b> ¿Qué miden las gráficas p y c?<button class="btn sm gr" style="margin-left:10px" onclick="this.parentNode.classList.toggle('open')">Ver</button><div class="ans">p = porcentaje de defectuosos; c = número de defectos por unidad.</div></div>
+ </div>
+</section>
+
+<section class="slide" id="s18"><span class="kicker">Síntesis</span><h2 class="sec">📈 Conclusiones</h2>
+ <div class="grid g4" style="margin:16px 0">
+  <div class="card"><b class="neon-c">Calidad</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Satisfacer necesidades; hacerlo bien a la primera.</p></div>
+  <div class="card"><b class="neon-m">CEP</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Separar causas naturales de asignables.</p></div>
+  <div class="card"><b class="neon-g">Habilidad</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Cp/Cpk miden si el proceso cumple especificaciones.</p></div>
+  <div class="card"><b class="neon-y">TQM</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Calidad desde el proveedor hasta el cliente.</p></div>
+ </div>
+ <div class="card"><h3 class="neon-y">📚 Referencias</h3><p style="font-size:13px;line-height:1.9;color:#bfe9f5">Krajewski, Ritzman & Malhotra (2013) · Heizer & Render (2019).</p></div>
+</section>
+
+<section class="slide" id="s19"><div style="min-height:80%;display:flex;flex-direction:column;justify-content:center">
+ <span class="kicker">Cierre</span><h2 class="sec">🏁 Ideas fuerza</h2>
+ <div class="grid g4" style="margin:16px 0">
+  <div class="card"><b class="neon-c">Calidad</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Variable precisa y medible.</p></div>
+  <div class="card"><b class="neon-m">Costos</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Prevención, evaluación, fallas internas y externas.</p></div>
+  <div class="card"><b class="neon-g">Control</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Gráficas X̄, R, p y c separan causas.</p></div>
+  <div class="card"><b class="neon-y">Habilidad</b><p style="font-size:13px;margin-top:6px;color:#bfe9f5">Cp/Cpk: cumplir especificaciones.</p></div>
+ </div>
+ <div class="aviso" style="margin-top:26px">📢 ESTÉN ATENTOS AL INICIO DE LA EVALUACIÓN EN CLASE</div>
+ <p class="center" style="margin-top:16px;font-size:20px;font-weight:900;background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent">¡MUCHAS GRACIAS! ⚙✨</p>
+</div></section>
+</div>
+
+<footer>
+ <button class="btn sm" onclick="goTo(current-1)">◀ Anterior</button>
+ <input type="range" id="slideSlider" min="0" max="19" value="0" oninput="goTo(+this.value)">
+ <button class="btn sm" onclick="goTo(current+1)">Siguiente ▶</button>
+ <span id="slideCounter">1 / 20</span>
+</footer>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];let current=0;
+const slider=document.getElementById('slideSlider');slider.max=slides.length-1;
+function goTo(i){if(i<0||i>=slides.length)return;slides[current].classList.remove('active');current=i;slides[current].classList.add('active');slides[current].scrollTop=0;slider.value=i;document.getElementById('slideCounter').textContent=(i+1)+' / '+slides.length;document.getElementById('progress').style.width=(i/(slides.length-1)*100)+'%';onSlideEnter(i);}
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')goTo(current+1);if(e.key==='ArrowLeft')goTo(current-1);});
+function makeBtns(id,infoId,data){const c=document.getElementById(id);data.forEach((d,i)=>{const b=document.createElement('button');b.className='btn sm'+(i%2?' mg':'');b.textContent=d[0];b.onclick=()=>{c.querySelectorAll('.btn').forEach(x=>x.classList.remove('active-opt'));b.classList.add('active-opt');document.getElementById(infoId).innerHTML='<b class="neon-c">'+d[0]+'</b><p style="margin-top:6px;font-size:14px;color:#d9f3fb">'+d[1]+'</p>';};c.appendChild(b);});}
+makeBtns('impBtns','impInfo',[['Reputación','La calidad buena o mala sigue a la organización; afecta percepción de productos, prácticas y proveedores.'],['Responsabilidad de producto','Las organizaciones responden por daños de productos defectuosos; leyes de seguridad del consumidor.'],['Implicaciones globales','Para competir globalmente, los productos deben satisfacer expectativas de calidad, diseño y precio.']]);
+makeBtns('cosBtns','cosInfo',[['Prevención','Reducir partes/servicios potencialmente defectuosos: capacitación, programas de mejora.'],['Evaluación','Pruebas, laboratorios, inspectores.'],['Falla interna','Defectos antes de la entrega: retrabajo, desperdicio, tiempos muertos.'],['Falla externa','Después de la entrega: bienes devueltos, responsabilidades, pérdida de imagen.']]);
+makeBtns('tqmBtns','tqmInfo',[['Hoja de verificación','Registro estructurado de datos y defectos.'],['Pareto','Prioriza los pocos vitales frente a los muchos triviales.'],['Causa‑efecto (Ishikawa)','Identifica raíces de un problema.'],['Histograma','Muestra la distribución de una variable.'],['Dispersión','Relaciona dos variables.'],['Gráficas de control','Separan causas naturales de asignables.'],['Estratificación','Divide datos en grupos homogéneos.']]);
+const vars=['<div class="card"><h3 class="neon-c">NATURAL</h3><p style="font-size:14px;margin-top:6px;color:#d9f3fb">Muchas fuentes dentro de un proceso bajo control; se comportan como un sistema constante de causas probabilísticas. Se caracterizan por µ y σ.</p></div>','<div class="card"><h3 class="neon-m">ASIGNABLE</h3><p style="font-size:14px;margin-top:6px;color:#d9f3fb">Rastreable a una razón específica: desgaste de maquinaria, desajuste, fatiga, mala capacitación, nuevos lotes de MP.</p></div>','<div class="card"><h3 class="neon-y">ESTADOS</h3><p style="font-size:14px;margin-top:6px;color:#d9f3fb">(a) Bajo control y capaz; (b) bajo control pero no capaz; (c) fuera de control.</p></div>'];
+function showVar(i){[0,1,2].forEach(j=>document.getElementById('varB'+j).classList.toggle('active-opt',j===i));document.getElementById('varPanel').innerHTML=vars[i];}
+showVar(0);
+/* Canvas gráfica de control */
+const ccPts=[0.560,0.561,0.559,0.562,0.558,0.561,0.5635,0.559,0.560,0.5565,0.561,0.560];
+const CL=0.56,UCL=0.5629,LCI=0.5571;
+function drawCC(k){const cv=document.getElementById('ccCanvas');const dpr=window.devicePixelRatio||1;const W=cv.clientWidth,H=260;cv.width=W*dpr;cv.height=H*dpr;const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);
+ const y=v=>H-30-((v-0.555)/(0.565-0.555))*(H-60);
+ const lx=40,rx=W-20;
+ const line=(v,col,dash)=>{x.strokeStyle=col;x.lineWidth=2;if(dash)x.setLineDash([6,5]);x.beginPath();x.moveTo(lx,y(v));x.lineTo(rx,y(v));x.stroke();x.setLineDash([]);};
+ line(UCL,'#ff3355',true);line(CL,'#39ff14',false);line(LCI,'#ff3355',true);
+ x.fillStyle='#9fd8e8';x.font='11px Segoe UI';x.textAlign='left';x.fillText('LCS 0.5629',lx+4,y(UCL)-6);x.fillText('LCI 0.5571',lx+4,y(LCI)+14);x.fillStyle='#39ff14';x.fillText('CL 0.5600',lx+4,y(CL)-6);
+ let out=0;
+ for(let i=0;i<k;i++){const px=lx+30+i*((rx-lx-50)/11);const v=ccPts[i];const isOut=v>UCL||v<LCI;if(isOut)out++;
+  x.strokeStyle='rgba(0,240,255,.4)';x.lineWidth=1.5;if(i>0){x.beginPath();x.moveTo(lx+30+(i-1)*((rx-lx-50)/11),y(ccPts[i-1]));x.lineTo(px,y(v));x.stroke();}
+  x.save();x.shadowColor=isOut?'#ff3355':'#00f0ff';x.shadowBlur=10;x.fillStyle=isOut?'#ff3355':'#00f0ff';x.beginPath();x.arc(px,y(v),5,0,Math.PI*2);x.fill();x.restore();}
+ document.getElementById('ccLabel').innerHTML='<b class="neon-c">▶</b> Muestras: '+k+' · Fuera de control: <b class="'+(out>0?'neon-m':'neon-g')+'">'+out+'</b>'+(out>0?' → investigar causa assignable':' → proceso bajo control');}
+/* Chart Cp */
+let cC=null;
+function initChartCp(){if(!window.Chart||cC)return;cC=new Chart(document.getElementById('chartCp'),{type:'bar',data:{labels:['Cp=1.0','Cp=1.33','Cp=2.0'],datasets:[{label:'Defectos por millón',data:[2700,64,3.4],backgroundColor:['rgba(255,51,85,.7)','rgba(255,230,0,.7)','rgba(57,255,20,.7)'],borderColor:['#ff3355','#ffe600','#39ff14'],borderWidth:2,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#d9f3fb'}}},scales:{x:{ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.06)'}},y:{type:'logarithmic',ticks:{color:'#9fd8e8'},grid:{color:'rgba(255,255,255,.08)'}}}}});}
+/* Three.js */
+let threeReady=false,threeFocus=-1,threeMeshes=[],threeGroup=null,threeRenderer,threeScene,threeCam;
+const defs3=[{col:0x39ff14,d:'<b class="neon-g">BAJO CONTROL Y CAPAZ:</b> solo causas comunes y dentro de especificaciones.'},{col:0xffe600,d:'<b class="neon-y">BAJO CONTROL, NO CAPAZ:</b> estable pero no cumple especificaciones.'},{col:0xff2ec4,d:'<b class="neon-m">FUERA DE CONTROL:</b> causas asignables presentes; investigar.'}];
+function initThree(){if(threeReady)return;if(!window.THREE)return;
+ try{const cv=document.getElementById('threeCanvas');const r=cv.getBoundingClientRect();const w=r.width||800,h=r.height||260;
+ threeRenderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});threeRenderer.setClearColor(0x000000,0);threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));threeRenderer.setSize(w,h,false);
+ threeScene=new THREE.Scene();threeCam=new THREE.PerspectiveCamera(50,w/h,.1,100);threeCam.position.set(0,2,8);threeCam.lookAt(0,0.8,0);
+ threeScene.add(new THREE.AmbientLight(0xffffff,.85));const p1=new THREE.PointLight(0x66ccff,1.2,80);p1.position.set(8,8,8);threeScene.add(p1);
+ const grid=new THREE.GridHelper(14,14,0x1b6fb0,0x0e3a66);grid.position.y=-0.2;threeScene.add(grid);
+ threeGroup=new THREE.Group();threeScene.add(threeGroup);
+ [0,1,2].forEach(i=>{const m=new THREE.Mesh(new THREE.BoxGeometry(1.4,1.4,1.4),new THREE.MeshPhongMaterial({color:defs3[i].col,emissive:defs3[i].col,emissiveIntensity:.35,shininess:90}));m.position.set((i-1)*2.6,0.8,0);threeGroup.add(m);threeMeshes.push(m);});
+ let drag=false,px=0,py=0;
+ cv.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;});
+ cv.addEventListener('pointermove',e=>{if(!drag)return;threeGroup.rotation.y+=(e.clientX-px)*.008;px=e.clientX;py=e.clientY;});
+ ['pointerup','pointerleave'].forEach(ev=>cv.addEventListener(ev,()=>drag=false));
+ (function anim(t){requestAnimationFrame(anim);if(!drag)threeGroup.rotation.y+=.0035;
+  threeMeshes.forEach((m,i)=>{m.position.y=0.8+Math.sin((t||0)*.0012+i)*.15;const tg=(threeFocus===i)?1.4:((threeFocus===-1)?1:.8);m.scale.lerp(new THREE.Vector3(tg,tg,tg),.08);m.material.emissiveIntensity+=(((threeFocus===i)?.75:.35)-m.material.emissiveIntensity)*.08;});
+  threeRenderer.render(threeScene,threeCam);})();
+ threeReady=true;}catch(e){}}
+function focus3D(i){threeFocus=(threeFocus===i)?-1:i;document.getElementById('threeDesc').innerHTML=threeFocus===-1?'<b class="neon-c">Escena 3D:</b> el proceso debe ponerse bajo control y luego demostrar habilidad.':defs3[i].d;}
+function onSlideEnter(i){const id=slides[i].id;if(id==='s10')drawCC(+document.getElementById('ccSlider').value);if(id==='s15')setTimeout(initChartCp,120);if(id==='s16')setTimeout(initThree,120);}
+addEventListener('resize',()=>{const id=slides[current].id;if(id==='s10')drawCC(+document.getElementById('ccSlider').value);if(id==='s16'&&threeRenderer){const r=document.getElementById('threeCanvas').getBoundingClientRect();threeRenderer.setSize(r.width,r.height,false);threeCam.aspect=r.width/r.height;threeCam.updateProjectionMatrix();}});
+goTo(0);
+</script>
+</body>
+</html>

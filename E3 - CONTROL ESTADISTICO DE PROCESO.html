@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación Sesión 3 — PCO (Calidad y Control Estadístico)</title>
+<style>
+:root{--bg:#04040a;--cyan:#00f0ff;--magenta:#ff2ec4;--yellow:#ffe600;--green:#39ff14;--usil:#0b5cab;--card:rgba(255,255,255,.05);--border:rgba(0,240,255,.25)}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:#eaf6ff;font-family:'Segoe UI',system-ui,Arial,sans-serif;min-height:100vh}
+header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(5,6,16,.95);border-bottom:1px solid var(--border)}
+#logoWrap{background:#fff;border-radius:10px;padding:3px 10px}#logoWrap img{height:40px;display:block}
+.brand{font-weight:800;font-size:14px;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip{padding:4px 10px;border-radius:20px;border:1px solid var(--border);color:var(--cyan);font-size:11px;font-weight:600}
+main{position:relative;z-index:10;max-width:880px;margin:26px auto 60px;padding:0 18px}
+h2.sec{font-size:26px;font-weight:900;background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px}
+.btn{cursor:pointer;border:1px solid var(--magenta);color:var(--magenta);background:rgba(255,46,196,.07);padding:10px 22px;border-radius:10px;font-size:15px;font-weight:700;text-transform:uppercase}
+.btn.gr{border-color:var(--green);color:var(--green);background:rgba(57,255,20,.07)}
+.btn.yl{border-color:var(--yellow);color:var(--yellow);background:rgba(255,230,0,.07)}
+.btn.sm{padding:6px 14px;font-size:12px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+input.txt{padding:11px 14px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.5);color:#fff;font-size:14px;outline:none;width:100%}
+#timerDisplay{font-size:36px;font-weight:900;color:var(--green)}
+#timerDisplay.warn{color:var(--orange)}#timerDisplay.danger{color:#ff3355}
+.qbox{border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:rgba(255,255,255,.03)}
+.qbox .qt{font-weight:700;margin-bottom:8px;font-size:14px}
+.qopt{display:block;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:#cfeef8;border:1px solid transparent;margin-bottom:4px}
+.qopt:hover{background:rgba(0,240,255,.08)}
+.qopt input{margin-right:8px;accent-color:var(--cyan)}
+.neon-g{color:var(--green)}.neon-m{color:var(--magenta)}.neon-y{color:var(--yellow)}
+</style>
+</head>
+<body>
+<header>
+ <div id="logoWrap"><img src="USIL_logo.png" alt="USIL" onerror="this.style.display='none'"></div>
+ <div class="brand">⚙ EVALUACIÓN · PCO · SESIÓN 3</div>
+ <div style="margin-left:auto;display:flex;gap:6px"><span class="chip">Calidad y CEP</span><span class="chip">1 intento · 10 min</span><span class="chip">Eduardo Olivos</span></div>
+</header>
+<main>
+ <h2 class="sec">📝 Evaluación Sesión 3 (Calidad y Control Estadístico)</h2>
+ <div id="quizIntro" class="card">
+  <label style="font-size:12px;color:#8fb8c6;font-weight:700">APELLIDOS Y NOMBRES (en este orden)</label>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:8px 0 12px">
+   <input class="txt" id="apPaterno" placeholder="1er Apellido"><input class="txt" id="apMaterno" placeholder="2do Apellido"><input class="txt" id="nombres" placeholder="Nombres">
+  </div>
+  <ul style="font-size:13px;line-height:1.9;padding-left:18px;color:#cfeef8">
+   <li>📖 Repasa <b class="neon-y">PCO_S3_Teoria.html</b>. Alternativas parecidas: lee con atención.</li>
+   <li>🕑 Tiempo límite: <b class="neon-y">10:00</b>. 🔒 1 intento por alumno.</li>
+   <li>🚫 Cambiar de pantalla = concluida y registrada.</li>
+   <li>📩 Al final puedes recibir el Feedback en tu correo.</li>
+  </ul>
+  <div class="btnrow"><button class="btn" id="btnStartQuiz" onclick="startQuiz()">🚀 Iniciar</button></div>
+  <div id="quizMsg" style="color:#ff8899;font-size:13px;font-weight:700"></div>
+ </div>
+ <div id="quizArea" style="display:none">
+  <div class="card" style="display:flex;align-items:center;gap:16px"><div id="timerDisplay">10:00</div><div><b id="quizStudent"></b></div></div>
+  <div id="questionsBox"></div>
+  <div class="btnrow"><button class="btn gr" onclick="submitQuiz(false)">✔ Entregar</button></div>
+ </div>
+ <div id="quizResult" style="display:none"></div>
+</main>
+<script>
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw92gRxVDJ-gunQgDs-xre1RjUFhcyRP0Y2VR3qJEe05qjwb0jffwNWuUU4EKXk-wZo/exec';
+const MAX=1,TLIM=600,CURSO='Planeamiento y Control de Operaciones',SESION='S3 - Calidad y CEP',KEY='pco_s3_v2';
+const Q=[
+{q:'Según la ASQ, la calidad es:',o:['Cumplir con los estándares y hacerlo bien a la primera vez','La totalidad de rasgos y características de un producto o servicio que respaldan su habilidad para satisfacer necesidades establecidas o implícitas','La capacidad de un proceso para cumplir las especificaciones de diseño','La ausencia de variabilidad en la producción'],c:1},
+{q:'La capacitación del personal y los programas de mejora de la calidad corresponden a qué costo de la calidad:',o:['Costos de evaluación','Costos por falla interna','Costos de prevención','Costos por falla externa'],c:2},
+{q:'El trabajo repetido y el desperdicio detectados antes de la entrega al cliente son un costo de:',o:['Prevención','Evaluación','Falla externa','Falla interna'],c:3},
+{q:'La norma ISO 14001 se refiere a:',o:['Administración de la calidad','Administración ambiental','Responsabilidad del producto','Seguridad ocupacional'],c:1},
+{q:'Un proceso opera bajo control estadístico cuando:',o:['Cumple las especificaciones de diseño','Su única fuente de variación son las causas comunes (naturales)','No presenta variabilidad alguna','Las causas asignables están detectadas y en observación'],c:1},
+{q:'El desgaste de maquinaria, la fatiga del operario y un nuevo lote de materia prima son fuentes de:',o:['Variación natural','Variación asignable','Variación aleatoria controlada','Variación inherente a un proceso capaz'],c:1},
+{q:'El teorema del límite central justifica usar medias muestrales porque:',o:['La distribución de x̄ tiende a normal y σx̄ = σ/√n','Las piezas individuales son más estables que la media','La media de x̄ siempre es mayor que µ','La desviación estándar aumenta con el tamaño de muestra'],c:0},
+{q:'En una gráfica R, los límites de control resultaron LCS = 11.21 y LCI = 0. En la última muestra se registró un rango de 12.5 libras. La interpretación correcta es:',o:['La media del proceso se desplazó hacia arriba, por eso está fuera de control','La dispersión del proceso está fuera de control; existe una causa assignable que afecta la variabilidad','El proceso está bajo control porque el rango está cerca del LCS','El proceso no es capaz de cumplir las especificaciones'],c:1},
+{q:'Para controlar el número de errores de captura de datos por registro (conteo de defectos), la gráfica adecuada es:',o:['Gráfica p','Gráfica c','Gráfica X̄','Gráfica R'],c:1},
+{q:'Una máquina nueva con Cpk=0.67 frente a una existente con Cpk=1.0: la decisión correcta es:',o:['Reemplazar, porque es más nueva','No reemplazar, porque la nueva no alcanza la habilidad de la existente','Reemplazar, porque Cpk>0','Indiferente, ambas son capaces'],c:1}];
+let act=false,tLeft=TLIM,tInt=null,rev=[],score=0;
+const $=id=>document.getElementById(id);
+function fullName(){const p=$('apPaterno').value.trim(),m=$('apMaterno').value.trim(),n=$('nombres').value.trim();return((p+' '+m).trim()+(n?', '+n:''));}
+function okName(){return $('apPaterno').value.trim().length>=2&&$('nombres').value.trim().length>=2;}
+function nKey(){return fullName().toLowerCase().replace(/[^a-z0-9ñ]+/gi,'_');}
+function gAtt(){try{return parseInt(localStorage.getItem(KEY+'_a_'+nKey())||'0')||0}catch(e){return 0}}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function startQuiz(){
+ if(!okName()){$('quizMsg').textContent='⚠ Escribe tu 1er apellido y tus nombres.';return;}
+ if(gAtt()>=MAX){$('quizMsg').textContent='🔒 '+fullName()+' ya usó su único intento.';return;}
+ act=true;tLeft=TLIM;
+ $('quizIntro').style.display='none';$('quizResult').style.display='none';$('quizArea').style.display='block';
+ $('quizStudent').textContent='Alumno(a): '+fullName();
+ const b=$('questionsBox');b.innerHTML='';
+ Q.forEach((q,i)=>{b.innerHTML+='<div class="qbox"><div class="qt">'+(i+1)+'. '+q.q+'</div>'+q.o.map((o,j)=>'<label class="qopt"><input type="radio" name="q'+i+'" value="'+j+'">'+String.fromCharCode(65+j)+') '+o+'</label>').join('')+'</div>';});
+ $('timerDisplay').textContent=fmt(TLIM);
+ tInt=setInterval(()=>{tLeft--;$('timerDisplay').textContent=fmt(tLeft);$('timerDisplay').className=tLeft<=30?'danger':(tLeft<=120?'warn':'');if(tLeft<=0){clearInterval(tInt);submitQuiz(true);}},1000);}
+function endSwitch(){if(act){act=false;clearInterval(tInt);submitQuiz(true);}}
+document.addEventListener('visibilitychange',()=>{if(act&&document.hidden)endSwitch();});
+window.addEventListener('blur',()=>{if(act)endSwitch();});
+function submitQuiz(auto){if(!act&&auto===false)return;act=false;clearInterval(tInt);
+ score=0;rev=[];
+ Q.forEach((q,i)=>{const s=document.querySelector('input[name="q'+i+'"]:checked');const v=s?+s.value:-1;const ok=v===q.c;if(ok)score++;rev.push({i:i+1,q:q.q,ok,sel:v>=0?q.o[v]:'— Sin respuesta —',ans:q.o[q.c]});});
+ try{localStorage.setItem(KEY+'_a_'+nKey(),'1')}catch(e){}
+ const name=fullName(),pct=score*10,ap=score>=6,used=TLIM-Math.max(tLeft,0),fecha=new Date().toLocaleString('es-PE');
+ const inc=auto?(tLeft<=0?'TIEMPO AGOTADO':'CAMBIO DE PANTALLA'):'ENTREGA NORMAL';
+ const payload={_subject:'Evaluación '+SESION+' — '+name,Curso:CURSO,Sesion:SESION,Alumno:name,Nota:score,Porcentaje:pct+'%',Estado:ap?'APROBADO':'DESAPROBADO',Intento:'1 de 1',Tiempo_empleado:fmt(used)+' de 10:00',Fecha:fecha,Incidencia:inc,Detalle:rev.map(r=>'P'+r.i+(r.ok?'OK':'ERROR')).join(' ')};
+ fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).catch(()=>{});
+ $('quizArea').style.display='none';
+ let h='<div class="card"><h3 class="'+(ap?'neon-g':'neon-m')+'" style="font-size:22px">'+(ap?'✅':'❌')+' Finalizada'+(inc!=='ENTREGA NORMAL'?' 🚫 '+inc:'')+'</h3><p><b>Alumno(a):</b> '+name+'</p><div style="font-size:44px;font-weight:900;color:'+(ap?'var(--green)':'var(--magenta)')+'">'+score+' / 10</div><p class="'+(ap?'neon-g':'neon-m')+'" style="font-weight:800">'+pct+'% — '+(ap?'APROBADO':'DESAPROBADO')+'</p><p style="font-size:12px;color:#8fb8c6">📨 Registrado en la hoja del curso. 🔒 Intento consumido.</p>'+
+ '<div style="margin-top:12px;border-top:1px dashed rgba(255,255,255,.2);padding-top:12px"><b class="neon-y">📩 Feedback a tu correo</b><p style="font-size:12px;margin:6px 0">Recibe tu calificación y cada pregunta con tu respuesta y la correcta.</p><input class="txt" id="fbEmail" type="email" placeholder="tucorreo@ejemplo.com" style="max-width:380px"><div class="btnrow"><button class="btn yl sm" onclick="sendFb()">📩 Enviar</button></div><div id="fbStatus" style="font-size:12px"></div></div>'+
+ '<b class="neon-y">🔎 Revisión</b>';
+ rev.forEach(r=>{h+='<div style="border-left:4px solid '+(r.ok?'var(--green)':'#ff3355')+';background:rgba(255,255,255,.03);padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:12.5px"><b>'+(r.ok?'✔':'✘')+' P'+r.i+'</b> '+r.q+'<br><span style="color:#8fb8c6">Tu respuesta: </span>'+r.sel+(r.ok?'':'<br><span style="color:var(--green)">Correcta: </span>'+r.ans)+'</div>';});
+ h+='</div>';
+ const r=$('quizResult');r.innerHTML=h;r.style.display='block';window.scrollTo(0,0);}
+function sendFb(){const em=$('fbEmail').value.trim();
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){$('fbStatus').innerHTML='<span style="color:#ff8899">⚠ Correo inválido.</span>';return;}
+ let fb='FEEDBACK '+SESION+'\nAlumno(a): '+fullName()+'\nNota: '+score+'/10\n\n';
+ rev.forEach(r=>{fb+=(r.ok?'✔':'✘')+' P'+r.i+' '+r.q+'\nTu respuesta: '+r.sel+'\nCorrecta: '+r.ans+'\n\n';});
+ fb+='Saludos,\nEduardo Olivos';
+ fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({Tipo:'FEEDBACK',Correo_alumno:em,_subject:'Feedback PCO S3 — '+fullName(),Feedback:fb,Curso:CURSO,Sesion:SESION,Alumno:fullName()})}).catch(()=>{});
+ $('fbStatus').innerHTML='<span class="neon-g">✅ Feedback enviado a '+em+'.</span>';}
+</script>
+</body>
+</html>
